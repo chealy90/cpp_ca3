@@ -5,4 +5,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(CA3 main.cpp
         Crawler.h
-        Position.h)
+        Position.h
+        Crawler.cpp
+        Direction.h)

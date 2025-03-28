@@ -5,19 +5,21 @@
 #ifndef CRAWLER_H
 #define CRAWLER_H
 #include "Position.h"
+#include "Direction.h"
 #include <list>
+
 class Crawler
 {
 private:
     int id;
     Position position;
-    int direction;
+    Direction direction;
     int size;
     bool alive;
-    list<Position> path;
+    std::list<Position> path;
 
 public:
-    Crawler();
+    Crawler(int id, Position position, Direction direction, int size);
 
     void move();
     bool isWayBlocked();
