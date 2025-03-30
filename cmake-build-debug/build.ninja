@@ -55,6 +55,12 @@ build CMakeFiles/CA3.dir/main.cpp.obj: CXX_COMPILER__CA3_unscanned_Debug C$:/Use
   OBJECT_DIR = CMakeFiles\CA3.dir
   OBJECT_FILE_DIR = CMakeFiles\CA3.dir
 
+build CMakeFiles/CA3.dir/Crawler.cpp.obj: CXX_COMPILER__CA3_unscanned_Debug C$:/Users/chris/OneDrive$ -$ Dundalk$ Institute$ of$ Technology/Year$ 2/C++/CA3/Crawler.cpp || cmake_object_order_depends_target_CA3
+  DEP_FILE = CMakeFiles\CA3.dir\Crawler.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\CA3.dir
+  OBJECT_FILE_DIR = CMakeFiles\CA3.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target CA3
@@ -63,7 +69,7 @@ build CMakeFiles/CA3.dir/main.cpp.obj: CXX_COMPILER__CA3_unscanned_Debug C$:/Use
 #############################################
 # Link the executable CA3.exe
 
-build CA3.exe: CXX_EXECUTABLE_LINKER__CA3_Debug CMakeFiles/CA3.dir/main.cpp.obj
+build CA3.exe: CXX_EXECUTABLE_LINKER__CA3_Debug CMakeFiles/CA3.dir/main.cpp.obj CMakeFiles/CA3.dir/Crawler.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\CA3.dir
