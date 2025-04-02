@@ -13,7 +13,7 @@ private:
     std:: vector<Crawler*> crawlers;
     std:: vector<Crawler*> cells[10][10];
     void updateCell();
-    void eatFunction();
+    void eatFightFunction();
 public:
     Board();
     ~Board();

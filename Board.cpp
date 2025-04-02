@@ -76,9 +76,9 @@ bool Board::initialiseBoard(const std::string &filename) {
             Position position;
             position.x = x;
             position.y = y;
-            Crawler *crawler = new Crawler(id, position, dir, size);
-            crawlers.push_back(crawler);
-            cells[x][y].push_back(crawler);
+            Crawler *bug = new Crawler(id, position, dir, size);
+            crawlers.push_back(bug);
+            cells[x][y].push_back(bug);
         }
     }
     fin.close();
@@ -130,11 +130,72 @@ void Board::displayAllBugs() const {
 }
 
 void Board::findBug(int id) const {
+    bool bugFound = false;
 
+    for (Crawler* bug : crawlers) {
+        if (bug->getId() == id) {
+            cout << "Bug found !" << endl;
+            cout << "ID :: " << bug->getId() << endl;
+            cout << "Position :: (" << bug->getPosition().x << "," << bug->getPosition().y << ")" << endl;
+
+            string direction;
+            if (bug->getDirection() == Direction::NORTH) {
+                direction = "NORTH";
+            }
+            else if (bug->getDirection() == Direction::EAST) {
+                direction = "EAST";
+            }
+            else if (bug->getDirection() == Direction::SOUTH) {
+                direction = "SOUTH";
+            }
+            else if (bug->getDirection() == Direction::WEST) {
+                direction = "WEST";
+            }
+            cout << "Direction :: " << direction << endl;
+            cout << "Size :: " << bug->getSize() << endl;
+            cout << "Status :: " << (bug->isAlive() ? "Alive" : "Dead") << endl;
+            bugFound = true;
+            break;
+        }
+    }
+    if (!bugFound) {
+        cout << "Bug {" << id << "} not found" << endl;
+    }
+}
+
+void Board::updateCell() {
+    for (int x = 0; x < 10; x++) {
+        for (int y = 0; y < 10; y++) {
+            cells[x][y].clear();
+        }
+    }
+
+    for (Crawler* bug : crawlers) {
+        if (bug->isAlive()) {
+            Position position = bug->getPosition();
+            cells[position.x][position.y].push_back(bug);
+        }
+    }
+}
+
+void Board::eatFightFunction() {
+    //  need to finish
+    for (int x = 0; x < 10; x++) {
+        for (int y = 0; y < 10; y++) {
+        }
+    }
 }
 
 void Board::tapBoard() {
+    for (Crawler *bug : crawlers) {
+        if (bug->isAlive()) {
+            bug->move();
+        }
+    }
 
+    // update cells and do option 7
+    updateCell();
+    eatFightFunction();
 }
 
 void Board::displayLifeHistoryAllBugs() const {
