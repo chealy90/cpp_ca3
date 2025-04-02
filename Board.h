@@ -12,7 +12,8 @@ class Board {
 private:
     std:: vector<Crawler*> crawlers;
     std:: vector<Crawler*> cells[10][10];
-
+    void updateCell();
+    void fightInCell();
 public:
     Board();
     ~Board();
@@ -25,9 +26,6 @@ public:
     void displayAllCells() const;
     void runSimulation();
     void writeLifeHistoryToFile() const;
-
-    void updateCell();
-    void fightInCell();
     bool isLastBugStanding();
 };
 
