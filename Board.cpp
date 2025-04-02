@@ -7,7 +7,6 @@
 #include <ctime>
 #include <fstream>
 #include <iostream>
-
 #include <iomanip>
 #include <vector>
 #include <cmath>
@@ -199,7 +198,72 @@ void Board::tapBoard() {
 }
 
 void Board::displayLifeHistoryAllBugs() const {
+    cout << "\n=========== BUGS LIFE HISTORY ===========\n" << endl;
 
+    for (Crawler *bug: crawlers) {
+        cout << "ID :: " << bug->getId() << endl;
+        cout << "Position :: (" << bug->getPosition().x << "," << bug->getPosition().y << ")" << endl;
+
+        string direction;
+        if (bug->getDirection() == Direction::NORTH) {
+            direction = "NORTH";
+        } else if (bug->getDirection() == Direction::EAST) {
+            direction = "EAST";
+        } else if (bug->getDirection() == Direction::SOUTH) {
+            direction = "SOUTH";
+        } else if (bug->getDirection() == Direction::WEST) {
+            direction = "WEST";
+        }
+        cout << "Direction :: " << direction << endl;
+        cout << "Size :: " << bug->getSize() << endl;
+        cout << "Status :: " << (bug->isAlive() ? "Alive" : "Dead") << endl;
+
+        cout << "\nCrawler Path: ";
+        list<Position> path = bug->getPath();
+        for (const Position &pos : path) {
+            cout << "(" << pos.x << "," << pos.y << ")" << endl;
+        }
+        cout << (bug->isAlive() ? "Alive" : "Dead") << endl; // need proper format
+    }
+}
+
+void Board::writeLifeHistoryToFile() const { // https://www.youtube.com/watch?v=M1E3roUNTMY&pp=ygUQI2xpZmVfdGltZV90cmljaw%3D%3D and https://www.youtube.com/watch?v=5VeIOAgjhE0
+    time_t currentTime = time(NULL);
+    tm *localTime = localtime(&currentTime);
+
+    ofstream fout("bugs_life_history_" +
+                  to_string(1900 + localTime->tm_year) + "-" +
+                  to_string(1 + localTime->tm_mon) + "-" +
+                  to_string(localTime->tm_mday) + "_" +
+                  to_string(localTime->tm_hour) + "-" +
+                  to_string(localTime->tm_min) + "-" +
+                  to_string(localTime->tm_sec) + ".out");
+
+    if (fout) {
+        fout << "=========== BUGS LIFE HISTORY ===========\n";
+        fout << "CREATED AT :: " << asctime(localTime);
+
+        fout << left
+                << setw(8) << "\nID"
+                << setw(10) << "Status"
+                << setw(8) << "Size"
+                << "Life History\n"
+                << "----------------------------------------\n";
+        for (const Crawler *bug: crawlers) {
+            fout << left
+                    << setw(8) << bug->getId()
+                    << setw(10) << (bug->isAlive() ? "Alive" : "Dead")
+                    << setw(8) << bug->getSize()
+                    << "Path: ";
+
+            for (const Position &pos: bug->getPath()) {
+                fout << "(" << pos.x << "," << pos.y << ") ";
+            }
+        }
+        fout.close();
+    } else {
+        cout << "Unable to write bug life history to file !\n";
+    }
 }
 
 void Board::displayAllCells() const {
@@ -210,18 +274,8 @@ void Board::runSimulation() {
 
 }
 
-void Board::writeLifeHistoryToFile() const {
 
-}
 
 bool Board::isLastBugStanding() {
-
-}
-
-void Board::updateCell() {
-
-}
-
-void Board::eatFunction() {
 
 }
