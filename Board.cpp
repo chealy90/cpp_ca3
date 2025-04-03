@@ -10,6 +10,7 @@
 #include <vector>
 #include <cmath>
 #include <cctype>
+#include <thread>
 
 using namespace std;
 
@@ -343,6 +344,37 @@ void Board::runSimulation() {
         }
     }
     cout << "Current number of bugs alive ::" << alive << endl;
+
+    int totalTaps = 0;
+    while (!isLastBugStanding() && alive > 0) {
+        // tap is every 0.1 seconds until game over https://www.geeksforgeeks.org/sleep-function-in-cpp/?ref=header_outind
+        this_thread::sleep_for(chrono::milliseconds(100));
+
+        tapBoard();
+        totalTaps++;
+
+        alive = 0;
+        for (Crawler *bug: crawlers) {
+            if (bug->isAlive()) {
+                alive++;
+            }
+        }
+        cout << "Tap #" << totalTaps << " - " << alive << " Crawler(s) left" << endl;
+    }
+
+    if (alive == 1 && isLastBugStanding()) {
+        cout << "=========== COMPLETED SIMULATION ===========\n" << endl;
+        cout << "WINNER - The last bug standing :: " << endl;
+        for (Crawler *bug: crawlers) {
+            if (bug->isAlive()) {
+                cout << "Crawler " << bug->getId() << " is the winner ! With size " << bug->getSize() << " !" << endl;
+            }
+        }
+    }
+    else {
+        cout << "=========== COMPLETED SIMULATION ===========\n" << endl;
+        cout << ":( All the bugs are dead .. GAME OVER" << endl;
+    }
 
     writeLifeHistoryToFile();
 }
