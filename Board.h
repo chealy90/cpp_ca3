@@ -7,6 +7,7 @@
 #include "Crawler.h"
 #include <vector>
 #include <string>
+#include <map>
 
 class Board {
 private:
@@ -14,6 +15,7 @@ private:
     std:: vector<Crawler*> cells[10][10];
     void updateCell();
     void eatFightFunction();
+    std::map<int, int> eatenBy;
 public:
     Board();
     ~Board();
@@ -21,7 +23,7 @@ public:
     bool initialiseBoard(const std::string& filename);
     void displayAllBugs() const;
     void findBug(int id) const;
-    void tapBoard(); // this is menu 4 but menu 7 expands this
+    void tapBoard();
     void displayLifeHistoryAllBugs() const;
     void displayAllCells() const;
     void runSimulation();

@@ -85,14 +85,14 @@ bool Board::initialiseBoard(const std::string &filename) {
 
 void Board::displayAllBugs() const {
     cout << left
-         << "\n=========== BUGS ===========\n"
-         << setw(10) << "ID"
-         << setw(12) << "Type"
+         << "=========== BUGS ===========\n"
+         << setw(8) << "ID"
+         << setw(15) << "Type"
          << setw(14) << "Position"
-         << setw(12) << "Size"
+         << setw(10) << "Size"
          << setw(12) << "Direction"
          << setw(10) << "Status"
-         << "\n-----------------------------------------------"
+         << "\n-------------------------------------------------------------------"
          << endl;
 
     for (Crawler* bug : crawlers) {
@@ -116,15 +116,15 @@ void Board::displayAllBugs() const {
         string status = bug->isAlive() ? "Alive" : "Dead";
 
         cout << left
-             << setw(10) << bug->getId()
-             << setw(12) << "Crawler"
+             << setw(8) << bug->getId()
+             << setw(15) << "Crawler"
              << setw(14) << pos
-             << setw(12) << bug->getSize()
+             << setw(10) << bug->getSize()
              << setw(12) << direction
              << setw(10) << status
              << endl;
     }
-    cout << endl;
+    // cout << endl;
 }
 
 void Board::findBug(int id) const {
@@ -132,7 +132,7 @@ void Board::findBug(int id) const {
 
     for (Crawler* bug : crawlers) {
         if (bug->getId() == id) {
-            cout << "Bug found !" << endl;
+            cout << "Bug Found !" << endl;
             cout << "ID :: " << bug->getId() << endl;
             cout << "Position :: (" << bug->getPosition().x << "," << bug->getPosition().y << ")" << endl;
 
@@ -179,7 +179,7 @@ void Board::updateCell() {
 void Board::eatFightFunction() {
     for (int x = 0; x < 10; x++) {
         for (int y = 0; y < 10; y++) {
-            if (cells[x][y].size() < 1) {
+            if (cells[x][y].size() > 1) {
                 // find the biggest in the cell
                 Crawler* largestBug = nullptr;
                 int largestSize = 0;
@@ -209,7 +209,7 @@ void Board::eatFightFunction() {
                         sizeGain += bug->getSize();
 
                         bug->setAlive(false);
-
+                        eatenBy[bug->getId()] = largestBug->getId();
                         cout << "Crawler " << largestBug->getId() << " ate Crawler " << bug->getId()
                              << " at position (" << x << "," << y << ")" << endl;
                     }
@@ -239,32 +239,44 @@ void Board::tapBoard() {
 }
 
 void Board::displayLifeHistoryAllBugs() const {
-    cout << "\n=========== BUGS LIFE HISTORY ===========\n" << endl;
+    cout << "=========== BUGS LIFE HISTORY ===========" << endl;
 
     for (Crawler *bug: crawlers) {
-        cout << "ID :: " << bug->getId() << endl;
-        cout << "Position :: (" << bug->getPosition().x << "," << bug->getPosition().y << ")" << endl;
+        cout << bug->getId();
+        // cout << "Position :: (" << bug->getPosition().x << "," << bug->getPosition().y << ")" << endl;
+        //
+        // string direction;
+        // if (bug->getDirection() == Direction::NORTH) {
+        //     direction = "NORTH";
+        // } else if (bug->getDirection() == Direction::EAST) {
+        //     direction = "EAST";
+        // } else if (bug->getDirection() == Direction::SOUTH) {
+        //     direction = "SOUTH";
+        // } else if (bug->getDirection() == Direction::WEST) {
+        //     direction = "WEST";
+        // }
+        // cout << "Direction :: " << direction << endl;
+        // cout << "Size :: " << bug->getSize() << endl;
+        // cout << "Status :: " << (bug->isAlive() ? "Alive" : "Dead") << endl;
 
-        string direction;
-        if (bug->getDirection() == Direction::NORTH) {
-            direction = "NORTH";
-        } else if (bug->getDirection() == Direction::EAST) {
-            direction = "EAST";
-        } else if (bug->getDirection() == Direction::SOUTH) {
-            direction = "SOUTH";
-        } else if (bug->getDirection() == Direction::WEST) {
-            direction = "WEST";
-        }
-        cout << "Direction :: " << direction << endl;
-        cout << "Size :: " << bug->getSize() << endl;
-        cout << "Status :: " << (bug->isAlive() ? "Alive" : "Dead") << endl;
-
-        cout << "\nCrawler Path: ";
+        cout << " Crawler Path: ";
         list<Position> path = bug->getPath();
         for (const Position &pos : path) {
-            cout << "(" << pos.x << "," << pos.y << ")" << endl;
+            cout << "(" << pos.x << "," << pos.y << ") ";
         }
-        cout << (bug->isAlive() ? "Alive" : "Dead") << endl; // need proper format
+       if (bug->isAlive()) {
+           cout << "Alive";
+       }
+        else {
+            auto iter = eatenBy.find(bug->getId());
+            if (iter != eatenBy.end()) {
+                cout << "Eaten by " << iter->second;
+            }
+            else {
+                cout << "Dead";
+            }
+        }
+        cout << endl;
     }
 }
 
@@ -272,16 +284,18 @@ void Board::writeLifeHistoryToFile() const { // https://www.youtube.com/watch?v=
     time_t currentTime = time(NULL);
     tm *localTime = localtime(&currentTime);
 
-    ofstream fout("bugs_life_history_" +
+    string filename = "bugs_life_history_" +
                   to_string(1900 + localTime->tm_year) + "-" +
                   to_string(1 + localTime->tm_mon) + "-" +
                   to_string(localTime->tm_mday) + "_" +
                   to_string(localTime->tm_hour) + "-" +
                   to_string(localTime->tm_min) + "-" +
-                  to_string(localTime->tm_sec) + ".out");
+                  to_string(localTime->tm_sec) + ".out";
+    // cout << "is creating:" << filename << endl; // debug line comment out when done
+    ofstream fout(filename);
 
-    if (fout) {
-        fout << "=========== BUGS LIFE HISTORY ===========\n";
+    if (fout.is_open()) {
+        fout << "=========== BUGS LIFE HISTORY ===========";
         fout << "CREATED AT :: " << asctime(localTime);
 
         fout << left
@@ -300,23 +314,24 @@ void Board::writeLifeHistoryToFile() const { // https://www.youtube.com/watch?v=
             for (const Position &pos: bug->getPath()) {
                 fout << "(" << pos.x << "," << pos.y << ") ";
             }
+            fout << endl;
         }
         fout.close();
     } else {
-        cout << "Unable to write bug life history to file !\n";
+        cout << "Unable to create and write bug life history to file !\n";
     }
 }
 
 void Board::displayAllCells() const {
-    cout << "=========== BUG BOARD CELLS ===========\n" << endl;
+    cout << "=========== BUG BOARD CELLS ===========\n";
     for (int x = 0; x < 10; x++) {
         for (int y = 0; y < 10; y++) {
-            cout << "(" << x << "," << y << "): " << endl;
+            cout << "(" << x << "," << y << "): ";
 
             if (cells[x][y].empty()) {
-                cout << "empty" << endl;
+                cout << "empty";
             } else {
-                for (const Crawler *bug: crawlers[x][y]) {
+                for (const Crawler *bug: cells[x][y]) {
                     cout << "Crawler " << bug->getId() << ". ";
                 }
             }
