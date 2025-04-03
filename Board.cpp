@@ -324,10 +324,26 @@ void Board::displayAllCells() const {
     }
 }
 
-void Board::runSimulation() {
-
-}
-
 bool Board::isLastBugStanding() {
-
+    int alive = 0;
+    for (Crawler *bug: crawlers) {
+        if (bug->isAlive()) {
+            alive++;
+        }
+    }
+    return alive == 1;
 }
+
+void Board::runSimulation() {
+    cout << "=========== .. RUNNING SIMULATION ===========\n" << endl;
+    int alive = 0;
+    for (Crawler *bug: crawlers) {
+        if (bug->isAlive()) {
+            alive++;
+        }
+    }
+    cout << "Current number of bugs alive ::" << alive << endl;
+
+    writeLifeHistoryToFile();
+}
+
