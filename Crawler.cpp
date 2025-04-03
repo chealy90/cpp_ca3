@@ -16,6 +16,40 @@ Crawler::Crawler(int id, Position position, Direction direction, int size) {
     this->path.push_back(position); //start of paths list with the initial position
 }
 
+// getters
+int Crawler::getId() const {
+    return id;
+}
+
+Position Crawler::getPosition() const {
+    return position;
+}
+
+Direction Crawler::getDirection() const {
+    return direction;
+}
+
+int Crawler::getSize() const {
+    return size;
+}
+
+bool Crawler::isAlive() const {
+    return alive;
+}
+
+const std::list<Position> & Crawler::getPath() const {
+    return path;
+}
+
+// setters
+void Crawler::setAlive(bool alive) {
+    this->alive = alive;
+}
+
+void Crawler::setSize(int size) {
+    this->size = size;
+}
+
 void Crawler::move() {
     if (this->isWayBlocked()) {
         //switch direction

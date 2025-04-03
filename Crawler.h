@@ -31,6 +31,10 @@ public:
     int getSize() const;
     bool isAlive() const;
     const std::list<Position>& getPath() const;
+
+    // setters
+    void setSize(int size);
+    void setAlive(bool alive);
 };
 
 #endif //CRAWLER_H

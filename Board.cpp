@@ -3,14 +3,12 @@
 //
 
 #include "Board.h"
-
 #include <ctime>
 #include <fstream>
 #include <iostream>
 #include <iomanip>
 #include <vector>
 #include <cmath>
-#include <algorithm>
 #include <cctype>
 
 using namespace std;
@@ -178,9 +176,51 @@ void Board::updateCell() {
 }
 
 void Board::eatFightFunction() {
-    //  need to finish
     for (int x = 0; x < 10; x++) {
         for (int y = 0; y < 10; y++) {
+            if (cells[x][y].size() < 1) {
+                // find the biggest in the cell
+                Crawler* largestBug = nullptr;
+                int largestSize = 0;
+                vector<Crawler*> equalSizeBugs;
+
+                for (Crawler* bug : cells[x][y]) {
+                    if (bug->isAlive() && bug->getSize() > largestSize) {
+                        largestSize = bug->getSize();
+                        largestBug = bug;
+                        equalSizeBugs.clear();
+                        equalSizeBugs.push_back(bug);
+                    } else if (bug->isAlive() && bug->getSize() == largestSize) { // more than 1 bug the same biggest size
+                        equalSizeBugs.push_back(bug);
+                    }
+                }
+                // bugs of same size randomly pick oen
+                if (equalSizeBugs.size() > 1) {
+                    int winnerIndex = rand() % equalSizeBugs.size();
+                    largestBug = equalSizeBugs[winnerIndex];
+                }
+
+                // fighting bugs
+                int sizeGain = 0;
+                for (Crawler* bug : cells[x][y]) {
+                    if (bug->isAlive() && bug != largestBug) {
+                        // bigger bug eats smaller bug after fight
+                        sizeGain += bug->getSize();
+
+                        bug->setAlive(false);
+
+                        cout << "Crawler " << largestBug->getId() << " ate Crawler " << bug->getId()
+                             << " at position (" << x << "," << y << ")" << endl;
+                    }
+                }
+
+                // add tjhe eaten bug to the bigger one in fight
+                if (sizeGain > 0) {
+                    int newSize = largestBug->getSize() + sizeGain;
+                    largestBug->setSize(newSize);
+                    cout << "Crawler " << largestBug->getId() << " grew to " << newSize << endl;
+                }
+            }
         }
     }
 }
@@ -267,14 +307,26 @@ void Board::writeLifeHistoryToFile() const { // https://www.youtube.com/watch?v=
 }
 
 void Board::displayAllCells() const {
+    cout << "=========== BUG BOARD CELLS ===========\n" << endl;
+    for (int x = 0; x < 10; x++) {
+        for (int y = 0; y < 10; y++) {
+            cout << "(" << x << "," << y << "): " << endl;
 
+            if (cells[x][y].empty()) {
+                cout << "empty" << endl;
+            } else {
+                for (const Crawler *bug: crawlers[x][y]) {
+                    cout << "Crawler " << bug->getId() << ". ";
+                }
+            }
+            cout << endl;
+        }
+    }
 }
 
 void Board::runSimulation() {
 
 }
-
-
 
 bool Board::isLastBugStanding() {
 
