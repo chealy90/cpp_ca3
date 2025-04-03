@@ -23,6 +23,7 @@ public:
 
     void move();
     bool isWayBlocked();
+    void toString();
 };
 
 #endif //CRAWLER_H

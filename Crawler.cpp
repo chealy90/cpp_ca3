@@ -1,11 +1,16 @@
 //
 // Created by chris on 28/03/2025.
 //
+
 #include "Crawler.h"
 #include "Position.h"
 #include <list>
+#include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <string>
+
+using namespace std;
 
 Crawler::Crawler(int id, Position position, Direction direction, int size) {
     this->id = id;
@@ -92,5 +97,14 @@ bool Crawler::isWayBlocked() {
 
     return false;
 }
+
+
+void Crawler::toString() {
+    cout << "ID: " << this->id << "Position: (" << this->position.x << this->position.y << "), Size: " << this->size
+                << ", Alive: " << this->alive << std::endl;
+
+}
+
+
 
 
