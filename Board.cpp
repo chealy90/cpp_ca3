@@ -361,7 +361,8 @@ void Board::runSimulation() {
     cout << "Current number of bugs alive ::" << alive << endl;
 
     int totalTaps = 0;
-    while (!isLastBugStanding() && alive > 0) {
+    while ((!isLastBugStanding() && alive > 0) && totalTaps < 20) {
+        cout << "Iteration:" << totalTaps << endl;
         // tap is every 0.1 seconds until game over https://www.geeksforgeeks.org/sleep-function-in-cpp/?ref=header_outind
         this_thread::sleep_for(chrono::milliseconds(100));
 

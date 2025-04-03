@@ -6,6 +6,7 @@
 #include <list>
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
 
 Crawler::Crawler(int id, Position position, Direction direction, int size) {
     this->id = id;
@@ -51,11 +52,12 @@ void Crawler::setSize(int size) {
 }
 
 void Crawler::move() {
-    if (this->isWayBlocked()) {
+
+    while (this->isWayBlocked()) {
         //switch direction
         //referenced code from https://www.geeksforgeeks.org/rand-and-srand-in-ccpp/
-        srand(time(0));
-        int randInt = (std::rand() & 4) + 1; //generate a random number between 1 and 4
+        srand(time(NULL));
+        int randInt = (std::rand() % 4 + 1); //generate a random number between 1 and 4
         switch (randInt) {
             case 1:
                 this->direction=Direction::NORTH;
@@ -70,57 +72,55 @@ void Crawler::move() {
                 this->direction=Direction::WEST;
                 break;
         }
-        //repeat function until able to move
-        this->move();
 
     }
-    else {
-        Position newPos;
-        //determine new position
-        switch (this->direction) {
-            case Direction::NORTH:
-                newPos.x = this->position.x;
-                newPos.y = this->position.y - 1;
-                break;
-            case Direction::EAST:
-                newPos.x = this->position.x + 1;
-                newPos.y = this->position.y;
-                break;
-            case Direction::SOUTH:
-                newPos.x = this->position.x;
-                newPos.y = this->position.y + 1;
-                break;
-            case Direction::WEST:
-                newPos.x = this->position.x - 1;
-                newPos.y = this->position.y;
+
+    //determine new position
+    Position newPos;
+    switch (this->direction) {
+        case Direction::NORTH:
+            newPos.x = this->position.x;
+            newPos.y = this->position.y - 1;
             break;
-        }
-
-        this->path.push_back(newPos);
-        this->position = newPos;
+        case Direction::EAST:
+            newPos.x = this->position.x + 1;
+            newPos.y = this->position.y;
+            break;
+        case Direction::SOUTH:
+            newPos.x = this->position.x;
+            newPos.y = this->position.y + 1;
+            break;
+        case Direction::WEST:
+            newPos.x = this->position.x - 1;
+            newPos.y = this->position.y;
+        break;
     }
+
+    this->path.push_back(newPos);
+    this->position = newPos;
+
 }
 
 
 
 bool Crawler::isWayBlocked() {
     //North boundary
-    if (this->direction == Direction::NORTH && this->position.y == 0) {
+    if (this->direction == Direction::NORTH && this->position.y <= 0) {
         return true;
     }
 
     //east boundary
-    if (this->direction == Direction::EAST && this->position.x == 10) { // FIX THIS
+    if (this->direction == Direction::EAST && this->position.x >= 9) { // FIX THIS
         return true;
     }
 
     //south boundary
-    if (this->direction == Direction::SOUTH && this->position.y == 10) { //FIX THIS
+    if (this->direction == Direction::SOUTH && this->position.y >= 9) { //FIX THIS
         return true;
     }
 
     //west boundary
-    if (this->direction == Direction::WEST && this->position.x == 0) {
+    if (this->direction == Direction::WEST && this->position.x <= 0) {
         return true;
     }
 
