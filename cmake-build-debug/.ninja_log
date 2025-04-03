@@ -1,9 +1,3 @@
 # ninja log v6
-85	935	7653091169660585	CMakeFiles/CA3.dir/main.cpp.obj	c0b4776d6a699d9e
-6	579	7653091740440584	CMakeFiles/CA3.dir/main.cpp.obj	c0b4776d6a699d9e
-6	628	7653092005617217	CMakeFiles/CA3.dir/main.cpp.obj	c0b4776d6a699d9e
-22	571	7653092227428275	CMakeFiles/CA3.dir/Crawler.cpp.obj	30393d7d6bd2083f
-5	701	7653092227266644	CMakeFiles/CA3.dir/main.cpp.obj	c0b4776d6a699d9e
-29	572	7653094864835443	CMakeFiles/CA3.dir/Crawler.cpp.obj	30393d7d6bd2083f
-7	692	7653094864614944	CMakeFiles/CA3.dir/main.cpp.obj	c0b4776d6a699d9e
 6	660	7653096261561913	CMakeFiles/CA3.dir/main.cpp.obj	c0b4776d6a699d9e
+29	572	7653094864835443	CMakeFiles/CA3.dir/Crawler.cpp.obj	30393d7d6bd2083f

@@ -48,21 +48,7 @@ void recordSimulationResults() {
 
 
 int main() {
-    std::vector<Crawler*> crawlers;
-    int menuChoice = 0;
-    do {
-        runMenu(menuChoice);
-        switch (menuChoice) {
-            case 1:
-                cout << "Initialing" << endl;
-                break;
-            case 2:
-                cout << "Displaying all Bugs" << endl;
-                cout << "------" << endl;
-                displayAllBugs(crawlers);
-                cout << "------" << endl;
-        }
-    } while (menuChoice != 8);
+
 
 
 
