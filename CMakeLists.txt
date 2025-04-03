@@ -7,4 +7,6 @@ add_executable(CA3 main.cpp
         Crawler.h
         Position.h
         Crawler.cpp
-        Direction.h)
+        Direction.h
+        Board.cpp
+        Board.h)

@@ -23,6 +23,18 @@ public:
 
     void move();
     bool isWayBlocked();
+
+    // getters
+    int getId() const;
+    Position getPosition() const;
+    Direction getDirection() const;
+    int getSize() const;
+    bool isAlive() const;
+    const std::list<Position>& getPath() const;
+
+    // setters
+    void setSize(int size);
+    void setAlive(bool alive);
 };
 
 #endif //CRAWLER_H
