@@ -4,14 +4,13 @@
 
 using namespace std;
 
-// Function to display menu options
 void displayMenu() {
     cout << "\n--------------------------------------------------\n";
     cout << " ============ A Bug's Life Menu =============\n";
     cout << "--------------------------------------------------\n";
-    cout << "1. Display All B ugs____." << endl;
+    cout << "1. Display All Bugs____." << endl;
     cout << "2. Find Bug by ID____." << endl;
-    cout << "3. Tap Board____." << endl; // this only works once but idk if we even need it in menu ?
+    cout << "3. Tap Board____." << endl;
     cout << "4. Display Life History Of All Bugs____." << endl;
     cout << "5. Write Life History of All Bug to File____." << endl;
     cout << "6. Display All Cells____." << endl;
@@ -95,6 +94,7 @@ int main() {
                 break;
             }
             case 8: {
+                board.writeLifeHistoryToFile();
                 cout << "[ ..NOW EXITING ] Thank you for using this program~" << endl;
                 break;
             }

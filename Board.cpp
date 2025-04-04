@@ -265,18 +265,18 @@ void Board::displayLifeHistoryAllBugs() const {
             cout << "(" << pos.x << "," << pos.y << ") ";
         }
        if (bug->isAlive()) {
-           cout << "Alive";
+           cout << "Alive" << endl;
        }
         else {
             auto iter = eatenBy.find(bug->getId());
             if (iter != eatenBy.end()) {
-                cout << "Eaten by " << iter->second;
+                cout << "Eaten by " << iter->second << endl;
             }
             else {
-                cout << "Dead";
+                cout << "Dead" << endl;
             }
         }
-        cout << endl;
+        // cout << endl;
     }
 }
 
@@ -295,7 +295,7 @@ void Board::writeLifeHistoryToFile() const { // https://www.youtube.com/watch?v=
     ofstream fout(filename);
 
     if (fout.is_open()) {
-        fout << "=========== BUGS LIFE HISTORY ===========";
+        fout << "=========== BUGS LIFE HISTORY ===========\n";
         fout << "CREATED AT :: " << asctime(localTime);
 
         fout << left
@@ -351,18 +351,18 @@ bool Board::isLastBugStanding() {
 }
 
 void Board::runSimulation() {
-    cout << "=========== .. RUNNING SIMULATION ===========\n" << endl;
+    cout << "=========== .. RUNNING SIMULATION ===========" << endl;
     int alive = 0;
     for (Crawler *bug: crawlers) {
         if (bug->isAlive()) {
             alive++;
         }
     }
-    cout << "Current number of bugs alive ::" << alive << endl;
+    cout << "Current number of bugs alive :: " << alive << "\n" << endl;
 
     int totalTaps = 0;
     while ((!isLastBugStanding() && alive > 0) && totalTaps < 20) {
-        cout << "Iteration:" << totalTaps << endl;
+        // cout << "Iteration:" << totalTaps << endl;
         // tap is every 0.1 seconds until game over https://www.geeksforgeeks.org/sleep-function-in-cpp/?ref=header_outind
         this_thread::sleep_for(chrono::milliseconds(100));
 
@@ -387,11 +387,15 @@ void Board::runSimulation() {
             }
         }
     }
+    else if (totalTaps >= 20) {
+        cout << "=========== STOPPED SIMULATION ===========\n" << endl;
+        cout << "Max iterations (20) reached !" << endl;
+    }
     else {
         cout << "=========== COMPLETED SIMULATION ===========\n" << endl;
         cout << ":( All the bugs are dead .. GAME OVER" << endl;
     }
 
-    writeLifeHistoryToFile();
+    // writeLifeHistoryToFile();
 }
 
