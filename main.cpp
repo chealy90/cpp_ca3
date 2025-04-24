@@ -1,8 +1,12 @@
 #include <iostream>
 #include <string>
 #include "Board.h"
+#include <SFML/Graphics.hpp>
+#include <chrono>
+#include <thread>
 
 using namespace std;
+using namespace sf;
 
 // Function to display menu options
 void displayMenu() {
@@ -26,13 +30,118 @@ int main() {
     bool initialise = false;
     int choice;
 
-    cout << "WELCOME TO 'A Bug's Life' !" << endl;
-    // cout << "\nInitialising board..." << endl;
     initialise = board.initialiseBoard("crawler-bugs.txt");
     if (!initialise) {
         cout << "Failed to initialize the board. Exiting program..." << endl;
         return 1;
     }
+
+
+    RenderWindow window(VideoMode(600, 600), "CA3");
+    vector<RectangleShape> squares;
+    vector<CircleShape> sprites;
+    vector<Text> numbers;
+    bool colourWhite=true;
+
+    //https://www.sfml-dev.org/tutorials/2.6/graphics-text.php
+    sf::Font font;
+    if (!font.loadFromFile("C:\\WINDOWS\\FONTS\\ARIAL.TTF"))
+    {
+        return 1;
+    }
+
+
+
+    for (int row = 0; row < 10;row++) {
+        for (int col = 0; col < 10; col++) {
+            RectangleShape square(Vector2f(60, 60));
+            square.setFillColor( colourWhite?Color::White:Color::Black ); // squares alternate between white and black
+            colourWhite=!colourWhite;
+            square.setPosition(Vector2f(static_cast<float>(row)*60, static_cast<float>(col)*60 ));
+            squares.push_back(square);
+        }
+        colourWhite = ! colourWhite;
+    }
+
+    for (Crawler* pCrawler: board.getAllAliveBugs()) {
+        Crawler crawler = *pCrawler;
+        CircleShape sprite(30);
+        sprite.setFillColor(Color::Red);
+        sprite.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60, static_cast<float>(crawler.getPosition().y)*60 ));
+        sprites.push_back(sprite);
+
+        Text text(to_string(crawler.getId()), font, 15);
+        text.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60 + 15, static_cast<float>(crawler.getPosition().y)*60 + 15));
+        numbers.push_back(text);
+
+
+    }
+
+
+
+
+
+
+    window.setFramerateLimit(30);  // 60 redraws per second
+    bool reactToMouseClicks=false;
+    int shape_x;
+    int shape_y;
+    //board.runSimulation();
+
+    while (window.isOpen())
+    {
+        sf::Event event;
+
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+        // tap is every 0.1 seconds until game over https://www.geeksforgeeks.org/sleep-function-in-cpp/?ref=header_outind
+        this_thread::sleep_for(chrono::milliseconds(500));
+        window.clear();
+
+        for (RectangleShape &square: squares) {
+            window.draw(square);
+        }
+
+        board.tapBoard();
+        //remake sprites
+        sprites.clear();
+        numbers.clear();
+        for (Crawler* pCrawler: board.getAllAliveBugs()) {
+            Crawler crawler = *pCrawler;
+            CircleShape sprite(30);
+            sprite.setFillColor(Color::Red);
+            sprite.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60, static_cast<float>(crawler.getPosition().y)*60 ));
+            sprites.push_back(sprite);
+
+            Text text(to_string(crawler.getId()), font, 15);
+            text.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60 + 15, static_cast<float>(crawler.getPosition().y)*60 + 15));
+            numbers.push_back(text);
+        }
+
+        vector<Crawler*> crawlers = board.getAllBugs();
+
+
+        for (CircleShape &sprite: sprites) {
+            window.draw(sprite);
+        }
+
+        for (Text &text: numbers) {
+            window.draw(text);
+        }
+        window.display();
+    }
+
+
+
+
+
+
+    cout << "WELCOME TO 'A Bug's Life' !" << endl;
+    // cout << "\nInitialising board..." << endl;
+
     // cout << "Board initialise successfully !\n" << endl;
 
     while (choice != 8) {

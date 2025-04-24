@@ -395,3 +395,27 @@ void Board::runSimulation() {
     writeLifeHistoryToFile();
 }
 
+std::vector<Crawler*> Board::getAllBugs() {
+    return this->crawlers;
+}
+
+std::vector<Crawler*> Board::getAllAliveBugs() {
+    std::vector<Crawler*> aliveBugs;
+    for (Crawler* pCrawler: this->crawlers) {
+        Crawler crawler = *pCrawler;
+        if (crawler.isAlive()) {
+            aliveBugs.push_back(pCrawler);
+        }
+    }
+    return aliveBugs;
+}
+
+
+
+
+
+
+
+
+
+

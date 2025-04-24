@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
+#include <vector>
 
 Crawler::Crawler(int id, Position position, Direction direction, int size) {
     this->id = id;
@@ -126,5 +127,6 @@ bool Crawler::isWayBlocked() {
 
     return false;
 }
+
 
 
