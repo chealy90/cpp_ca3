@@ -20,7 +20,8 @@ void displayMenu() {
     cout << "5. Write Life History of All Bug to File____." << endl;
     cout << "6. Display All Cells____." << endl;
     cout << "7. Run Simulation____." << endl;
-    cout << "8. Exit." << endl;
+    cout << "8. Run Visual Simulation" << endl;
+    cout << "9. Exit." << endl;
     cout << "--------------------------------------------------\n";
     cout << " ============ SELECT AN OPTION =============\n";
 }
@@ -43,17 +44,14 @@ void recalculateSpritesVectors(vector<CircleShape> &sprites, vector<Text> &numbe
     }
 }
 
-int main() {
+void runVisualSimulation() {
+    bool initialise;
     Board board;
-    bool initialise = false;
-    int choice;
-
     initialise = board.initialiseBoard("crawler-bugs.txt");
     if (!initialise) {
         cout << "Failed to initialize the board. Exiting program..." << endl;
-        return 1;
+        return;
     }
-
 
     RenderWindow window(VideoMode(600, 600), "CA3");
     vector<RectangleShape> squares;
@@ -65,10 +63,8 @@ int main() {
     sf::Font font;
     if (!font.loadFromFile("C:\\WINDOWS\\FONTS\\ARIAL.TTF"))
     {
-        return 1;
+        return;
     }
-
-
 
     for (int row = 0; row < 10;row++) {
         for (int col = 0; col < 10; col++) {
@@ -91,14 +87,7 @@ int main() {
         Text text(to_string(crawler.getId()), font, 15);
         text.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60 + 15, static_cast<float>(crawler.getPosition().y)*60 + 15));
         numbers.push_back(text);
-
-
     }
-
-
-
-
-
 
     window.setFramerateLimit(30);  // 60 redraws per second
     bool reactToMouseClicks=false;
@@ -106,6 +95,8 @@ int main() {
     int shape_y;
     //board.runSimulation();
     bool runningSimulation = false;
+
+
 
     while (window.isOpen())
     {
@@ -158,18 +149,25 @@ int main() {
         }
         window.display();
     }
+}
 
+int main() {
+    Board board;
+    bool initialise = false;
+    int choice;
 
-
-
-
+    initialise = board.initialiseBoard("crawler-bugs.txt");
+    if (!initialise) {
+        cout << "Failed to initialize the board. Exiting program..." << endl;
+        return 1;
+    }
 
     cout << "WELCOME TO 'A Bug's Life' !" << endl;
     // cout << "\nInitialising board..." << endl;
 
     // cout << "Board initialise successfully !\n" << endl;
 
-    while (choice != 8) {
+    while (choice != 9) {
         displayMenu();
 
         if (!(cin >> choice)) { // https://cplusplus.com/forum/beginner/142433/
@@ -229,6 +227,12 @@ int main() {
                 break;
             }
             case 8: {
+                cout << "[ ..RUNNING VISUAL SIMULATION ]" << endl;
+                runVisualSimulation();
+                break;
+
+            }
+            case 9: {
                 cout << "[ ..NOW EXITING ] Thank you for using this program~" << endl;
                 break;
             }
