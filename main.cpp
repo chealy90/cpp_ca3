@@ -25,6 +25,24 @@ void displayMenu() {
     cout << " ============ SELECT AN OPTION =============\n";
 }
 
+
+void recalculateSpritesVectors(vector<CircleShape> &sprites, vector<Text> &numbers, Board &board, const Font &font) {
+    //remake sprites
+    sprites.clear();
+    numbers.clear();
+    for (Crawler* pCrawler: board.getAllAliveBugs()) {
+        Crawler crawler = *pCrawler;
+        CircleShape sprite(30);
+        sprite.setFillColor(Color::Red);
+        sprite.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60, static_cast<float>(crawler.getPosition().y)*60 ));
+        sprites.push_back(sprite);
+
+        Text text(to_string(crawler.getId()), font, 15);
+        text.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60 + 15, static_cast<float>(crawler.getPosition().y)*60 + 15));
+        numbers.push_back(text);
+    }
+}
+
 int main() {
     Board board;
     bool initialise = false;
@@ -87,41 +105,48 @@ int main() {
     int shape_x;
     int shape_y;
     //board.runSimulation();
+    bool runningSimulation = false;
 
     while (window.isOpen())
     {
         sf::Event event;
 
+
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            if (event.type == Event::KeyPressed) {
+                if (event.key.code == Keyboard::Key::Space) {
+                    board.tapBoard();
+
+                    //only remake sprites after changes to stop unncessesary calcs.
+                    recalculateSpritesVectors(sprites, numbers, board, font);
+                }
+                else if (event.key.code == Keyboard::Key::P){
+                    runningSimulation = !runningSimulation;
+                }
+            }
+
         }
+
         // tap is every 0.1 seconds until game over https://www.geeksforgeeks.org/sleep-function-in-cpp/?ref=header_outind
-        this_thread::sleep_for(chrono::milliseconds(500));
+        if (runningSimulation) {
+            this_thread::sleep_for(chrono::milliseconds(1000));
+            board.tapBoard();
+            recalculateSpritesVectors(sprites, numbers, board, font);
+        }
+
+
         window.clear();
 
         for (RectangleShape &square: squares) {
             window.draw(square);
         }
 
-        board.tapBoard();
-        //remake sprites
-        sprites.clear();
-        numbers.clear();
-        for (Crawler* pCrawler: board.getAllAliveBugs()) {
-            Crawler crawler = *pCrawler;
-            CircleShape sprite(30);
-            sprite.setFillColor(Color::Red);
-            sprite.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60, static_cast<float>(crawler.getPosition().y)*60 ));
-            sprites.push_back(sprite);
 
-            Text text(to_string(crawler.getId()), font, 15);
-            text.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60 + 15, static_cast<float>(crawler.getPosition().y)*60 + 15));
-            numbers.push_back(text);
-        }
-
-        vector<Crawler*> crawlers = board.getAllBugs();
+        //vector<Crawler*> crawlers = board.getAllBugs();
 
 
         for (CircleShape &sprite: sprites) {
@@ -216,3 +241,6 @@ int main() {
 
     return 0;
 }
+
+
+
