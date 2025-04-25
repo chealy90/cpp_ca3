@@ -8,6 +8,8 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <sstream>
+
 
 class Board {
 private:
@@ -29,6 +31,11 @@ public:
     void runSimulation();
     void writeLifeHistoryToFile() const;
     bool isLastBugStanding();
+
+    std::vector<Crawler*> getAllBugs();
+    std::vector<Crawler*> getAllAliveBugs();
+
+
 };
 
 
