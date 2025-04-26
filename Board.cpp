@@ -12,6 +12,8 @@
 #include <cctype>
 #include <thread>
 
+#include "Hopper.h"
+
 using namespace std;
 
 Board::Board() {
@@ -35,7 +37,7 @@ bool Board::initialiseBoard(const std::string &filename) {
     while (getline(fin, line)) {
         if (line.length() > 0) {
             char type;
-            int id, x, y, direction, size;
+            int id, x, y, direction, size, hopLength = 2;
 
             stringstream ss(line);
             string temp;
@@ -73,10 +75,32 @@ bool Board::initialiseBoard(const std::string &filename) {
 
             Position position;
             position.x = x;
-            position.y = y;
-            Crawler *bug = new Crawler(id, position, dir, size);
-            crawlers.push_back(bug);
-            cells[x][y].push_back(bug);
+            // Crawler *bug = new Crawler(id, position, dir, size);
+            // crawlers.push_back(bug);
+            // cells[x][y].push_back(bug);
+
+            // whether it's a crawler or a hopper
+            Bug *bug = nullptr;
+            if (type == 'C' || type == 'c') {
+                bug = new Crawler(id, position, dir, size);
+            }
+            else if (type == 'H' || type == 'h') {
+                getLine(ss, temp, ',');
+                if (temp.length() > 0) {
+                    hopLength = stoi(temp);
+                } else {
+                    hopLength = 2; // default hop length
+                }
+                bug = new Hopper(id, position, dir, size, hopLength);
+            }
+
+            if (bug != nullptr) {
+                bugs.push_back(bug);
+                cells[x][y].push_back(bug);
+            }
+            // Crawler *bug = new Crawler(id, position, dir, size);
+            // crawlers.push_back(bug);
+            // cells[x][y].push_back(bug);
         }
     }
     fin.close();
@@ -92,6 +116,7 @@ void Board::displayAllBugs() const {
          << setw(10) << "Size"
          << setw(12) << "Direction"
          << setw(10) << "Status"
+         << setw(12) << "Hop Length"
          << "\n-------------------------------------------------------------------"
          << endl;
 
@@ -115,13 +140,23 @@ void Board::displayAllBugs() const {
 
         string status = bug->isAlive() ? "Alive" : "Dead";
 
+        string bugType;
+        string hopLength = "";
+        if (bug->isHopper()) {
+            bugType = "Hopper";
+            hopLength = to_string(bug->getHopLength());
+        } else {
+            bugType = "Crawler";
+        }
+
         cout << left
              << setw(8) << bug->getId()
-             << setw(15) << "Bug"
+             << setw(15) << bugType
              << setw(14) << pos
              << setw(10) << bug->getSize()
              << setw(12) << direction
              << setw(10) << status
+             << setw(12) << hopLength
              << endl;
     }
     // cout << endl;
@@ -152,6 +187,14 @@ void Board::findBug(int id) const {
             cout << "Direction :: " << direction << endl;
             cout << "Size :: " << bug->getSize() << endl;
             cout << "Status :: " << (bug->isAlive() ? "Alive" : "Dead") << endl;
+
+            if (bug->isHopper()) {
+                cout << "Type :: Hopper" << endl;
+                cout << "Hop Length :: " << bug->getHopLength() << endl;
+            } else {
+                cout << "Type :: Crawler" << endl;
+            }
+
             bugFound = true;
             break;
         }
@@ -210,7 +253,12 @@ void Board::eatFightFunction() {
 
                         bug->setAlive(false);
                         eatenBy[bug->getId()] = largestBug->getId();
-                        cout << "Crawler " << largestBug->getId() << " ate Crawler " << bug->getId()
+                        // cout << "Crawler " << largestBug->getId() << " ate Crawler " << bug->getId()
+                        //      << " at position (" << x << "," << y << ")" << endl;
+
+                        string bugType = bug->isHopper() ? "Hopper" : "Crawler";
+                        string winnerType = largestBug->isHopper() ? "Hopper" : "Crawler";
+                        cout << winnerType << " " << largestBug->getId() << " ate " << bugType << " " << bug->getId()
                              << " at position (" << x << "," << y << ")" << endl;
                     }
                 }
@@ -219,7 +267,9 @@ void Board::eatFightFunction() {
                 if (sizeGain > 0) {
                     int newSize = largestBug->getSize() + sizeGain;
                     largestBug->setSize(newSize);
-                    cout << "Crawler " << largestBug->getId() << " grew to " << newSize << endl;
+                    // cout << "Crawler " << largestBug->getId() << " grew to " << newSize << endl;
+                    string winnerType = largestBug->isHopper() ? "Hopper" : "Crawler";
+                    cout << winnerType << " " << largestBug->getId() << " grew to " << newSize << endl;
                 }
             }
         }
@@ -242,7 +292,6 @@ void Board::displayLifeHistoryAllBugs() const {
     cout << "=========== BUGS LIFE HISTORY ===========" << endl;
 
     for (Bug *bug: bugs) {
-        cout << bug->getId();
         // cout << "Position :: (" << bug->getPosition().x << "," << bug->getPosition().y << ")" << endl;
         //
         // string direction;
@@ -259,7 +308,11 @@ void Board::displayLifeHistoryAllBugs() const {
         // cout << "Size :: " << bug->getSize() << endl;
         // cout << "Status :: " << (bug->isAlive() ? "Alive" : "Dead") << endl;
 
-        cout << " Bug Path: ";
+        // cout << bug->getId();
+        // cout << " Bug Path: ";
+
+        string bugType = bug->isHopper() ? "Hopper" : "Crawler";
+        cout << bug->getId() << " " << bugType << " Path: ";
         list<Position> path = bug->getPath();
         for (const Position &pos : path) {
             cout << "(" << pos.x << "," << pos.y << ") ";
@@ -300,13 +353,16 @@ void Board::writeLifeHistoryToFile() const { // https://www.youtube.com/watch?v=
 
         fout << left
                 << setw(8) << "\nID"
+                << setw(10) << "Type"
                 << setw(10) << "Status"
                 << setw(8) << "Size"
                 << "Life History\n"
                 << "----------------------------------------\n";
         for (const Bug *bug: bugs) {
+            string bugType = bug->isHopper() ? "Hopper" : "Crawler";
             fout << left
                     << setw(8) << bug->getId()
+                    << setw(10) << bugType
                     << setw(10) << (bug->isAlive() ? "Alive" : "Dead")
                     << setw(8) << bug->getSize()
                     << "Path: ";
@@ -331,8 +387,16 @@ void Board::displayAllCells() const {
             if (cells[x][y].empty()) {
                 cout << "empty";
             } else {
-                for (const Bug *bug: cells[x][y]) {
-                    cout << "Crawler " << bug->getId() << ". ";
+                string bugType;
+                for (Bug *bug: cells[x][y]) {
+                    if (bug->isAlive()) {
+                        if (bug->isHopper()) {
+                            bugType = "Hopper";
+                        } else {
+                            bugType = "Crawler";
+                        }
+                        cout << bugType << " " << bug->getId() << " ";
+                    }
                 }
             }
             cout << endl;
@@ -383,7 +447,10 @@ void Board::runSimulation() {
         cout << "WINNER - The last bug standing :: " << endl;
         for (Bug *bug: bugs) {
             if (bug->isAlive()) {
-                cout << "Crawler " << bug->getId() << " is the winner ! With size " << bug->getSize() << " !" << endl;
+                // cout << "Crawler " << bug->getId() << " is the winner ! With size " << bug->getSize() << " !" << endl;
+
+                string bugType = bug->isHopper() ? "Hopper" : "Crawler";
+                cout << bugType << " " << bug->getId() << " is the winner ! With size " << bug->getSize() << " !" << endl;
             }
         }
     }
