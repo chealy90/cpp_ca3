@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.21)
-project(sfml_002)
+project(cpp_ca3)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(CA3 main.cpp
+add_executable(cpp_ca3 main.cpp
         Crawler.h
         Position.h
         Crawler.cpp
@@ -12,8 +12,9 @@ add_executable(CA3 main.cpp
         Board.h)
 
 
-set(SFML_DIR C:/SFML-2.5.1/lib/cmake/SFML)
-find_package(SFML COMPONENTS system window graphics network REQUIRED)
+set(SFML_STATIC_LIBRARIES TRUE)
+set(SFML_DIR C:/Users/favou/Documents/SFML-2.6.2/lib/cmake/SFML)
+find_package(SFML COMPONENTS system window graphics network REQUIRED) # remove audio references
 
-include_directories(C:/SFML-2.5.1/include)
-target_link_libraries(CA3 sfml-system sfml-window sfml-graphics)
+include_directories(C:/Users/favou/Documents/SFML-2.6.2/include)
+target_link_libraries(cpp_ca3 sfml-system sfml-window sfml-graphics)
