@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.30)
 project(cpp_ca3)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
 
 add_executable(cpp_ca3 main.cpp
         Crawler.h
@@ -9,7 +9,11 @@ add_executable(cpp_ca3 main.cpp
         Crawler.cpp
         Direction.h
         Board.cpp
-        Board.h)
+        Board.h
+        Bug.cpp
+        Bug.h
+        Hopper.cpp
+        Hopper.h)
 
 
 set(SFML_STATIC_LIBRARIES TRUE)

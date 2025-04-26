@@ -1,20 +1,22 @@
 //
-// Created by chris on 28/03/2025.
+// Created by favou on 26/04/2025.
 //
-#include "Crawler.h"
-#include "Position.h"
-#include <list>
-#include <cstdlib>
-#include <ctime>
-#include <iostream>
-#include <vector>
 
-Crawler::Crawler(int id, Position position, Direction direction, int size): Bug(id, position, direction, size) {
-    this->setAlive(true); //assume all bugs are alive at creation
-    this->setPosition(position); //start of paths list with the initial position
+#include "Hopper.h"
+#include <cstdlib>
+
+using namespace std;
+
+Hopper::Hopper(int id, Position position, Direction direction, int size, int hopLength) : Bug(id, position, direction, size) {
+    setId(id);
+    setPosition(position);
+    setDirection(direction);
+    setSize(size);
+    setAlive(true);
+    this->hopLength = hopLength;
 }
 
-void Crawler::move() {
+void Hopper::move() {
     // don't move if bug dead
     if (!this->isAlive()) {
         return;
@@ -47,22 +49,27 @@ void Crawler::move() {
     switch (this->getDirection()) {
         case Direction::NORTH:
             newPos.x = this->getPosition().x;
-            newPos.y = this->getPosition().y - 1;
-        break;
+            newPos.y = this->getPosition().y - hopLength;
+            break;
         case Direction::EAST:
-            newPos.x = this->getPosition().x + 1;
+            newPos.x = this->getPosition().x + hopLength;
             newPos.y = this->getPosition().y;
-        break;
+            break;
         case Direction::SOUTH:
             newPos.x = this->getPosition().x;
-            newPos.y = this->getPosition().y + 1;
-        break;
+            newPos.y = this->getPosition().y + hopLength;
+            break;
         case Direction::WEST:
-            newPos.x = this->getPosition().x - 1;
+            newPos.x = this->getPosition().x - hopLength;
             newPos.y = this->getPosition().y;
-        break;
+            break;
     }
 
-    this->setPosition(newPos);
+    // if out of bounds, do not move
+    if (newPos.x < 0 || newPos.x > 9 || newPos.y < 0 || newPos.y > 9) {
+        return;
+    }
 
+    // set the new position
+    this->setPosition(newPos);
 }
