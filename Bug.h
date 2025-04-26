@@ -43,6 +43,9 @@ public:
     }
 
     // setters
+    void setId(int newId) {
+        id = newId;
+    }
     void setPosition(Position newPosition) {
         position = newPosition;
         path.push_back(newPosition);

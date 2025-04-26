@@ -8,123 +8,60 @@
 #include <ctime>
 #include <iostream>
 
-Crawler::Crawler(int id, Position position, Direction direction, int size) {
-    this->id = id;
-    this->position = position;
-    this->direction = direction;
-    this->size = size;
-    this->alive = true; //assume all bugs are alive at creation
-    this->path.push_back(position); //start of paths list with the initial position
-}
-
-// getters
-int Crawler::getId() const {
-    return id;
-}
-
-Position Crawler::getPosition() const {
-    return position;
-}
-
-Direction Crawler::getDirection() const {
-    return direction;
-}
-
-int Crawler::getSize() const {
-    return size;
-}
-
-bool Crawler::isAlive() const {
-    return alive;
-}
-
-const std::list<Position> & Crawler::getPath() const {
-    return path;
-}
-
-// setters
-void Crawler::setAlive(bool alive) {
-    this->alive = alive;
-}
-
-void Crawler::setSize(int size) {
-    this->size = size;
+Crawler::Crawler(int id, Position position, Direction direction, int size): Bug(id, position, direction, size) {
+    this->setAlive(true); //assume all bugs are alive at creation
+    this->setPosition(position); //start of paths list with the initial position
 }
 
 void Crawler::move() {
+    // don't move if bug dead
+    if (!this->isAlive()) {
+        return;
+    }
 
     while (this->isWayBlocked()) {
         //switch direction
         //referenced code from https://www.geeksforgeeks.org/rand-and-srand-in-ccpp/
         // srand(time(NULL));
-        int randInt = (std::rand() % 4 + 1); //generate a random number between 1 and 4
+        int randInt = std::rand() % 4 + 1; //generate a random number between 1 and 4
         switch (randInt) {
             case 1:
-                this->direction=Direction::NORTH;
-                break;
+                this->setDirection(Direction::NORTH);
+            break;
             case 2:
-                this->direction=Direction::EAST;
-                break;
+                this->setDirection(Direction::EAST);
+            break;
             case 3:
-                this->direction=Direction::SOUTH;
-                break;
+                this->setDirection(Direction::SOUTH);
+            break;
             case 4:
-                this->direction=Direction::WEST;
-                break;
+                this->setDirection(Direction::WEST);
+            break;
         }
 
     }
 
     //determine new position
     Position newPos;
-    switch (this->direction) {
+    switch (this->getDirection()) {
         case Direction::NORTH:
-            newPos.x = this->position.x;
-            newPos.y = this->position.y - 1;
-            break;
+            newPos.x = this->getPosition().x;
+            newPos.y = this->getPosition().y - 1;
+        break;
         case Direction::EAST:
-            newPos.x = this->position.x + 1;
-            newPos.y = this->position.y;
-            break;
+            newPos.x = this->getPosition().x + 1;
+            newPos.y = this->getPosition().y;
+        break;
         case Direction::SOUTH:
-            newPos.x = this->position.x;
-            newPos.y = this->position.y + 1;
-            break;
+            newPos.x = this->getPosition().x;
+            newPos.y = this->getPosition().y + 1;
+        break;
         case Direction::WEST:
-            newPos.x = this->position.x - 1;
-            newPos.y = this->position.y;
+            newPos.x = this->getPosition().x - 1;
+            newPos.y = this->getPosition().y;
         break;
     }
 
-    this->path.push_back(newPos);
-    this->position = newPos;
+    this->setPosition(newPos);
 
 }
-
-
-
-bool Crawler::isWayBlocked() {
-    //North boundary
-    if (this->direction == Direction::NORTH && this->position.y <= 0) {
-        return true;
-    }
-
-    //east boundary
-    if (this->direction == Direction::EAST && this->position.x >= 9) { // FIXED
-        return true;
-    }
-
-    //south boundary
-    if (this->direction == Direction::SOUTH && this->position.y >= 9) { //FIXED
-        return true;
-    }
-
-    //west boundary
-    if (this->direction == Direction::WEST && this->position.x <= 0) {
-        return true;
-    }
-
-    return false;
-}
-
-
