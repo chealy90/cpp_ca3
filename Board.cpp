@@ -19,13 +19,13 @@ Board::Board() {
 }
 
 Board::~Board() { // https://en.cppreference.com/w/cpp/language/destructor
-    for (Crawler* bug : crawlers) {
+    for (Bug* bug : bugs) {
         delete bug;
     }
 }
 
 bool Board::initialiseBoard(const std::string &filename) {
-    ifstream fin("crawler-bugs.txt");
+    ifstream fin("bugs.txt");
     if (!fin) {
         cout << "\nFile not found !" << endl;
         return false;
@@ -95,7 +95,7 @@ void Board::displayAllBugs() const {
          << "\n-------------------------------------------------------------------"
          << endl;
 
-    for (Crawler* bug : crawlers) {
+    for (Bug* bug : bugs) {
         Position position = bug->getPosition();
         string pos = "(" + to_string(position.x) + ", " + to_string(position.y) + ")";
 
@@ -117,7 +117,7 @@ void Board::displayAllBugs() const {
 
         cout << left
              << setw(8) << bug->getId()
-             << setw(15) << "Crawler"
+             << setw(15) << "Bug"
              << setw(14) << pos
              << setw(10) << bug->getSize()
              << setw(12) << direction
@@ -130,7 +130,7 @@ void Board::displayAllBugs() const {
 void Board::findBug(int id) const {
     bool bugFound = false;
 
-    for (Crawler* bug : crawlers) {
+    for (Bug* bug : bugs) {
         if (bug->getId() == id) {
             cout << "Bug Found !" << endl;
             cout << "ID :: " << bug->getId() << endl;
@@ -168,7 +168,7 @@ void Board::updateCell() {
         }
     }
 
-    for (Crawler* bug : crawlers) {
+    for (Bug* bug : bugs) {
         if (bug->isAlive()) {
             Position position = bug->getPosition();
             cells[position.x][position.y].push_back(bug);
@@ -181,11 +181,11 @@ void Board::eatFightFunction() {
         for (int y = 0; y < 10; y++) {
             if (cells[x][y].size() > 1) {
                 // find the biggest in the cell
-                Crawler* largestBug = nullptr;
+                Bug* largestBug = nullptr;
                 int largestSize = 0;
-                vector<Crawler*> equalSizeBugs;
+                vector<Bug*> equalSizeBugs;
 
-                for (Crawler* bug : cells[x][y]) {
+                for (Bug* bug : cells[x][y]) {
                     if (bug->isAlive() && bug->getSize() > largestSize) {
                         largestSize = bug->getSize();
                         largestBug = bug;
@@ -203,7 +203,7 @@ void Board::eatFightFunction() {
 
                 // fighting bugs
                 int sizeGain = 0;
-                for (Crawler* bug : cells[x][y]) {
+                for (Bug* bug : cells[x][y]) {
                     if (bug->isAlive() && bug != largestBug) {
                         // bigger bug eats smaller bug after fight
                         sizeGain += bug->getSize();
@@ -227,7 +227,7 @@ void Board::eatFightFunction() {
 }
 
 void Board::tapBoard() {
-    for (Crawler *bug : crawlers) {
+    for (Bug *bug : bugs) {
         if (bug->isAlive()) {
             bug->move();
         }
@@ -241,7 +241,7 @@ void Board::tapBoard() {
 void Board::displayLifeHistoryAllBugs() const {
     cout << "=========== BUGS LIFE HISTORY ===========" << endl;
 
-    for (Crawler *bug: crawlers) {
+    for (Bug *bug: bugs) {
         cout << bug->getId();
         // cout << "Position :: (" << bug->getPosition().x << "," << bug->getPosition().y << ")" << endl;
         //
@@ -259,7 +259,7 @@ void Board::displayLifeHistoryAllBugs() const {
         // cout << "Size :: " << bug->getSize() << endl;
         // cout << "Status :: " << (bug->isAlive() ? "Alive" : "Dead") << endl;
 
-        cout << " Crawler Path: ";
+        cout << " Bug Path: ";
         list<Position> path = bug->getPath();
         for (const Position &pos : path) {
             cout << "(" << pos.x << "," << pos.y << ") ";
@@ -304,7 +304,7 @@ void Board::writeLifeHistoryToFile() const { // https://www.youtube.com/watch?v=
                 << setw(8) << "Size"
                 << "Life History\n"
                 << "----------------------------------------\n";
-        for (const Crawler *bug: crawlers) {
+        for (const Bug *bug: bugs) {
             fout << left
                     << setw(8) << bug->getId()
                     << setw(10) << (bug->isAlive() ? "Alive" : "Dead")
@@ -331,7 +331,7 @@ void Board::displayAllCells() const {
             if (cells[x][y].empty()) {
                 cout << "empty";
             } else {
-                for (const Crawler *bug: cells[x][y]) {
+                for (const Bug *bug: cells[x][y]) {
                     cout << "Crawler " << bug->getId() << ". ";
                 }
             }
@@ -342,7 +342,7 @@ void Board::displayAllCells() const {
 
 bool Board::isLastBugStanding() {
     int alive = 0;
-    for (Crawler *bug: crawlers) {
+    for (Bug *bug: bugs) {
         if (bug->isAlive()) {
             alive++;
         }
@@ -353,7 +353,7 @@ bool Board::isLastBugStanding() {
 void Board::runSimulation() {
     cout << "=========== .. RUNNING SIMULATION ===========" << endl;
     int alive = 0;
-    for (Crawler *bug: crawlers) {
+    for (Bug *bug: bugs) {
         if (bug->isAlive()) {
             alive++;
         }
@@ -370,18 +370,18 @@ void Board::runSimulation() {
         totalTaps++;
 
         alive = 0;
-        for (Crawler *bug: crawlers) {
+        for (Bug *bug: bugs) {
             if (bug->isAlive()) {
                 alive++;
             }
         }
-        cout << "Tap #" << totalTaps << " - " << alive << " Crawler(s) left" << endl;
+        cout << "Tap #" << totalTaps << " - " << alive << " Bug(s) left" << endl;
     }
 
     if (alive == 1 && isLastBugStanding()) {
         cout << "=========== COMPLETED SIMULATION ===========\n" << endl;
         cout << "WINNER - The last bug standing :: " << endl;
-        for (Crawler *bug: crawlers) {
+        for (Bug *bug: bugs) {
             if (bug->isAlive()) {
                 cout << "Crawler " << bug->getId() << " is the winner ! With size " << bug->getSize() << " !" << endl;
             }
@@ -399,14 +399,14 @@ void Board::runSimulation() {
     // writeLifeHistoryToFile();
 }
 
-std::vector<Crawler*> Board::getAllBugs() {
-    return this->crawlers;
+std::vector<Bug*> Board::getAllBugs() {
+    return this->bugs;
 }
 
-std::vector<Crawler*> Board::getAllAliveBugs() {
-    std::vector<Crawler*> aliveBugs;
-    for (Crawler* pCrawler: this->crawlers) {
-        Crawler crawler = *pCrawler;
+std::vector<Bug*> Board::getAllAliveBugs() {
+    std::vector<Bug*> aliveBugs;
+    for (Bug* pCrawler: this->bugs) {
+        Bug crawler = *pCrawler;
         if (crawler.isAlive()) {
             aliveBugs.push_back(pCrawler);
         }
