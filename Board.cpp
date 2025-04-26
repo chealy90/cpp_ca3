@@ -75,6 +75,7 @@ bool Board::initialiseBoard(const std::string &filename) {
 
             Position position;
             position.x = x;
+            position.y = y;
             // Crawler *bug = new Crawler(id, position, dir, size);
             // crawlers.push_back(bug);
             // cells[x][y].push_back(bug);
@@ -85,7 +86,7 @@ bool Board::initialiseBoard(const std::string &filename) {
                 bug = new Crawler(id, position, dir, size);
             }
             else if (type == 'H' || type == 'h') {
-                getLine(ss, temp, ',');
+                getline(ss, temp, ',');
                 if (temp.length() > 0) {
                     hopLength = stoi(temp);
                 } else {
@@ -472,10 +473,9 @@ std::vector<Bug*> Board::getAllBugs() {
 
 std::vector<Bug*> Board::getAllAliveBugs() {
     std::vector<Bug*> aliveBugs;
-    for (Bug* pCrawler: this->bugs) {
-        Bug crawler = *pCrawler;
-        if (crawler.isAlive()) {
-            aliveBugs.push_back(pCrawler);
+    for (Bug* bug: this->bugs) {
+        if (bug->isAlive()) {
+            aliveBugs.push_back(bug);
         }
     }
     return aliveBugs;
