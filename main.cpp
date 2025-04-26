@@ -1,9 +1,14 @@
 #include <iostream>
 #include <string>
 #include "Board.h"
+#include <SFML/Graphics.hpp>
+#include <chrono>
+#include <thread>
 
 using namespace std;
+using namespace sf;
 
+// Function to display menu options
 void displayMenu() {
     cout << "\n--------------------------------------------------\n";
     cout << " ============ A Bug's Life Menu =============\n";
@@ -15,9 +20,135 @@ void displayMenu() {
     cout << "5. Write Life History of All Bug to File____." << endl;
     cout << "6. Display All Cells____." << endl;
     cout << "7. Run Simulation____." << endl;
-    cout << "8. Exit." << endl;
+    cout << "8. Run Visual Simulation" << endl;
+    cout << "9. Exit." << endl;
     cout << "--------------------------------------------------\n";
     cout << " ============ SELECT AN OPTION =============\n";
+}
+
+
+void recalculateSpritesVectors(vector<CircleShape> &sprites, vector<Text> &numbers, Board &board, const Font &font) {
+    //remake sprites
+    sprites.clear();
+    numbers.clear();
+    for (Crawler* pCrawler: board.getAllAliveBugs()) {
+        Crawler crawler = *pCrawler;
+        CircleShape sprite(30);
+        sprite.setFillColor(Color::Red);
+        sprite.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60, static_cast<float>(crawler.getPosition().y)*60 ));
+        sprites.push_back(sprite);
+
+        Text text(to_string(crawler.getId()), font, 15);
+        text.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60 + 15, static_cast<float>(crawler.getPosition().y)*60 + 15));
+        numbers.push_back(text);
+    }
+}
+
+void runVisualSimulation() {
+    bool initialise;
+    Board board;
+    initialise = board.initialiseBoard("crawler-bugs.txt");
+    if (!initialise) {
+        cout << "Failed to initialize the board. Exiting program..." << endl;
+        return;
+    }
+
+    RenderWindow window(VideoMode(600, 600), "CA3");
+    vector<RectangleShape> squares;
+    vector<CircleShape> sprites;
+    vector<Text> numbers;
+    bool colourWhite=true;
+
+    //https://www.sfml-dev.org/tutorials/2.6/graphics-text.php
+    sf::Font font;
+    if (!font.loadFromFile("C:\\WINDOWS\\FONTS\\ARIAL.TTF"))
+    {
+        return;
+    }
+
+    for (int row = 0; row < 10;row++) {
+        for (int col = 0; col < 10; col++) {
+            RectangleShape square(Vector2f(60, 60));
+            square.setFillColor( colourWhite?Color::White:Color::Black ); // squares alternate between white and black
+            colourWhite=!colourWhite;
+            square.setPosition(Vector2f(static_cast<float>(row)*60, static_cast<float>(col)*60 ));
+            squares.push_back(square);
+        }
+        colourWhite = ! colourWhite;
+    }
+
+    for (Crawler* pCrawler: board.getAllAliveBugs()) {
+        Crawler crawler = *pCrawler;
+        CircleShape sprite(30);
+        sprite.setFillColor(Color::Red);
+        sprite.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60, static_cast<float>(crawler.getPosition().y)*60 ));
+        sprites.push_back(sprite);
+
+        Text text(to_string(crawler.getId()), font, 15);
+        text.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60 + 15, static_cast<float>(crawler.getPosition().y)*60 + 15));
+        numbers.push_back(text);
+    }
+
+    window.setFramerateLimit(30);  // 60 redraws per second
+    bool reactToMouseClicks=false;
+    int shape_x;
+    int shape_y;
+    //board.runSimulation();
+    bool runningSimulation = false;
+
+
+
+    while (window.isOpen())
+    {
+        sf::Event event;
+
+
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+
+            if (event.type == Event::KeyPressed) {
+                if (event.key.code == Keyboard::Key::Space) {
+                    board.tapBoard();
+
+                    //only remake sprites after changes to stop unncessesary calcs.
+                    recalculateSpritesVectors(sprites, numbers, board, font);
+                }
+                else if (event.key.code == Keyboard::Key::P){
+                    runningSimulation = !runningSimulation;
+                }
+            }
+
+        }
+
+        // tap is every 0.1 seconds until game over https://www.geeksforgeeks.org/sleep-function-in-cpp/?ref=header_outind
+        if (runningSimulation) {
+            this_thread::sleep_for(chrono::milliseconds(1000));
+            board.tapBoard();
+            recalculateSpritesVectors(sprites, numbers, board, font);
+        }
+
+
+        window.clear();
+
+        for (RectangleShape &square: squares) {
+            window.draw(square);
+        }
+
+
+        //vector<Crawler*> crawlers = board.getAllBugs();
+
+
+        for (CircleShape &sprite: sprites) {
+            window.draw(sprite);
+        }
+
+        for (Text &text: numbers) {
+            window.draw(text);
+        }
+        window.display();
+    }
 }
 
 int main() {
@@ -25,16 +156,18 @@ int main() {
     bool initialise = false;
     int choice;
 
-    cout << "WELCOME TO 'A Bug's Life' !" << endl;
-    // cout << "\nInitialising board..." << endl;
     initialise = board.initialiseBoard("crawler-bugs.txt");
     if (!initialise) {
         cout << "Failed to initialize the board. Exiting program..." << endl;
         return 1;
     }
+
+    cout << "WELCOME TO 'A Bug's Life' !" << endl;
+    // cout << "\nInitialising board..." << endl;
+
     // cout << "Board initialise successfully !\n" << endl;
 
-    while (choice != 8) {
+    while (choice != 9) {
         displayMenu();
 
         if (!(cin >> choice)) { // https://cplusplus.com/forum/beginner/142433/
@@ -94,7 +227,12 @@ int main() {
                 break;
             }
             case 8: {
-                board.writeLifeHistoryToFile();
+                cout << "[ ..RUNNING VISUAL SIMULATION ]" << endl;
+                runVisualSimulation();
+                break;
+
+            }
+            case 9: {
                 cout << "[ ..NOW EXITING ] Thank you for using this program~" << endl;
                 break;
             }
@@ -107,3 +245,6 @@ int main() {
 
     return 0;
 }
+
+
+
