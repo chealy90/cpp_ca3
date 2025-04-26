@@ -1,0 +1,26 @@
+### Build Directories ###
+/cmake-build-*/
+!/cmake-build-debug/crawler-bugs.txt  # Your exception
+
+### CLion ###
+# Ignore all .idea contents except essential project files
+.idea/*
+!.idea/modules.xml
+!.idea/cpp_ca3.iml
+!.idea/misc.xml  # Recommended to keep
+!.idea/runConfigurations/  # If you use run configurations
+
+### Compiled Files ###
+*.exe
+*.dll
+*.obj
+*.lib
+*.a
+*.so
+*.pdb
+
+### CMake ###
+CMakeCache.txt
+CMakeFiles/
+Makefile
+*.ninja
