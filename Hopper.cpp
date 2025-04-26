@@ -3,6 +3,7 @@
 //
 
 #include "Hopper.h"
+#include <cstdlib>
 
 using namespace std;
 

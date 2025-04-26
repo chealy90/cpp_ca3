@@ -3,6 +3,7 @@
 //
 
 #include "Bug.h"
+#include <iostream>
 
 using namespace std;
 
