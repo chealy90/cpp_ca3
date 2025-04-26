@@ -13,8 +13,13 @@ public:
     Hopper(int id, Position position, Direction direction, int size, int hopLength);
     void move() override;
 
+    // override methods so that hopper with identify as hopper and show hop length when asked
+    bool isHopper() const override {;
+        return true;
+    }
+
     // getters
-    int getHopLength() const {
+    int getHopLength() const override {
         return hopLength;
     }
 };

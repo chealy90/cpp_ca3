@@ -1,6 +1,7 @@
 ### Build Directories ###
 /cmake-build-*/
-!/cmake-build-debug/crawler-bugs.txt  # Your exception
+!/cmake-build-debug/crawler-bugs.txt
+!/cmake-build-debug/bugs.txt
 
 ### CLion ###
 # Ignore all .idea contents except essential project files

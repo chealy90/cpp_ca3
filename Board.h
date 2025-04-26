@@ -5,6 +5,7 @@
 #ifndef BOARD_H
 #define BOARD_H
 #include "Crawler.h"
+#include "Bug.h"
 #include <vector>
 #include <string>
 #include <map>
@@ -13,8 +14,8 @@
 
 class Board {
 private:
-    std:: vector<Crawler*> crawlers;
-    std:: vector<Crawler*> cells[10][10];
+    std::vector<Bug*> bugs;
+    std::vector<Bug*> cells[10][10];
     void updateCell();
     void eatFightFunction();
     std::map<int, int> eatenBy;
@@ -32,8 +33,8 @@ public:
     void writeLifeHistoryToFile() const;
     bool isLastBugStanding();
 
-    std::vector<Crawler*> getAllBugs();
-    std::vector<Crawler*> getAllAliveBugs();
+    std::vector<Bug*> getAllBugs();
+    std::vector<Bug*> getAllAliveBugs();
 
 
 };

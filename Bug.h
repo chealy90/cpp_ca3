@@ -21,6 +21,13 @@ public:
     virtual ~Bug();
     virtual void move() = 0;
     bool isWayBlocked() const;
+    // must check if bug is hiopper
+    virtual bool isHopper() const {
+        return false;
+    }
+    virtual int getHopLength() const {
+        return 0;
+    }
 
     // getters
     int getId() const {

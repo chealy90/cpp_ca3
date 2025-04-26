@@ -31,15 +31,14 @@ void recalculateSpritesVectors(vector<CircleShape> &sprites, vector<Text> &numbe
     //remake sprites
     sprites.clear();
     numbers.clear();
-    for (Crawler* pCrawler: board.getAllAliveBugs()) {
-        Crawler crawler = *pCrawler;
+    for (Bug* bug: board.getAllAliveBugs()) {
         CircleShape sprite(30);
         sprite.setFillColor(Color::Red);
-        sprite.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60, static_cast<float>(crawler.getPosition().y)*60 ));
+        sprite.setPosition(Vector2f(static_cast<float>(bug->getPosition().x)*60, static_cast<float>(bug->getPosition().y)*60 ));
         sprites.push_back(sprite);
 
-        Text text(to_string(crawler.getId()), font, 15);
-        text.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60 + 15, static_cast<float>(crawler.getPosition().y)*60 + 15));
+        Text text(to_string(bug->getId()), font, 15);
+        text.setPosition(Vector2f(static_cast<float>(bug->getPosition().x)*60 + 15, static_cast<float>(bug->getPosition().y)*60 + 15));
         numbers.push_back(text);
     }
 }
@@ -47,7 +46,7 @@ void recalculateSpritesVectors(vector<CircleShape> &sprites, vector<Text> &numbe
 void runVisualSimulation() {
     bool initialise;
     Board board;
-    initialise = board.initialiseBoard("crawler-bugs.txt");
+    initialise = board.initialiseBoard("bugs.txt");
     if (!initialise) {
         cout << "Failed to initialize the board. Exiting program..." << endl;
         return;
@@ -77,15 +76,14 @@ void runVisualSimulation() {
         colourWhite = ! colourWhite;
     }
 
-    for (Crawler* pCrawler: board.getAllAliveBugs()) {
-        Crawler crawler = *pCrawler;
+    for (Bug* bug: board.getAllAliveBugs()) {
         CircleShape sprite(30);
         sprite.setFillColor(Color::Red);
-        sprite.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60, static_cast<float>(crawler.getPosition().y)*60 ));
+        sprite.setPosition(Vector2f(static_cast<float>(bug->getPosition().x)*60, static_cast<float>(bug->getPosition().y)*60 ));
         sprites.push_back(sprite);
 
-        Text text(to_string(crawler.getId()), font, 15);
-        text.setPosition(Vector2f(static_cast<float>(crawler.getPosition().x)*60 + 15, static_cast<float>(crawler.getPosition().y)*60 + 15));
+        Text text(to_string(bug->getId()), font, 15);
+        text.setPosition(Vector2f(static_cast<float>(bug->getPosition().x)*60 + 15, static_cast<float>(bug->getPosition().y)*60 + 15));
         numbers.push_back(text);
     }
 
@@ -156,7 +154,7 @@ int main() {
     bool initialise = false;
     int choice;
 
-    initialise = board.initialiseBoard("crawler-bugs.txt");
+    initialise = board.initialiseBoard("bugs.txt");
     if (!initialise) {
         cout << "Failed to initialize the board. Exiting program..." << endl;
         return 1;
