@@ -8,7 +8,9 @@
 #include "Direction.h"
 #include <list>
 
-class Crawler
+#include "Bug.h"
+
+class Crawler : public Bug
 {
 private:
     int id;
@@ -21,7 +23,7 @@ private:
 public:
     Crawler(int id, Position position, Direction direction, int size);
 
-    void move();
+    void move() override;
     bool isWayBlocked();
 
     // getters
@@ -35,6 +37,8 @@ public:
     // setters
     void setSize(int size);
     void setAlive(bool alive);
+
+    ~Crawler() override;
 };
 
 #endif //CRAWLER_H

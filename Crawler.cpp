@@ -56,7 +56,7 @@ void Crawler::move() {
     while (this->isWayBlocked()) {
         //switch direction
         //referenced code from https://www.geeksforgeeks.org/rand-and-srand-in-ccpp/
-        srand(time(NULL));
+        // srand(time(NULL));
         int randInt = (std::rand() % 4 + 1); //generate a random number between 1 and 4
         switch (randInt) {
             case 1:
@@ -110,12 +110,12 @@ bool Crawler::isWayBlocked() {
     }
 
     //east boundary
-    if (this->direction == Direction::EAST && this->position.x >= 9) { // FIX THIS
+    if (this->direction == Direction::EAST && this->position.x >= 9) { // FIXED
         return true;
     }
 
     //south boundary
-    if (this->direction == Direction::SOUTH && this->position.y >= 9) { //FIX THIS
+    if (this->direction == Direction::SOUTH && this->position.y >= 9) { //FIXED
         return true;
     }
 
