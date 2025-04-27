@@ -13,6 +13,7 @@ SuperBug::SuperBug(int id, Position position, Direction direction, int size)
 }
 
 void SuperBug::move() {
+    manualMoved = false;
     // don't move if bug dead
     if (!this->isAlive()) {
         return;
@@ -69,6 +70,7 @@ void SuperBug::move() {
 }
 
 void SuperBug::move(Direction manualControl) {
+    manualMoved = true;
     // don't move if bug dead
     if (!this->isAlive()) {
         return;

@@ -233,6 +233,19 @@ void Board::eatFightFunction() {
     for (int x = 0; x < 10; x++) {
         for (int y = 0; y < 10; y++) {
             if (cells[x][y].size() > 1) {
+                // check if superbug was manual moved and fought
+                bool superBug = false;
+                for (Bug* bug : cells[x][y]) {
+                    if (bug->isSuperBug() && static_cast<SuperBug*>(bug)->wasManualMoved()) {
+                        superBug = true;
+                        break;
+                    }
+                }
+
+                if (superBug) {
+                    cout << "SuperBug started fight at (" << x << "," << y << ")" << endl;
+                }
+
                 // find the biggest in the cell
                 Bug* largestBug = nullptr;
                 int largestSize = 0;
@@ -266,8 +279,8 @@ void Board::eatFightFunction() {
                         // cout << "Crawler " << largestBug->getId() << " ate Crawler " << bug->getId()
                         //      << " at position (" << x << "," << y << ")" << endl;
 
-                        string bugType = bug->isHopper() ? "Hopper" : "Crawler";
-                        string winnerType = largestBug->isHopper() ? "Hopper" : "Crawler";
+                        string bugType = bug->isHopper() ? "Hopper" : (bug->isSuperBug() ? "SuperBug" : "Crawler");
+                        string winnerType = largestBug->isHopper() ? "Hopper" : (largestBug->isSuperBug() ? "SuperBug" : "Crawler");
                         cout << winnerType << " " << largestBug->getId() << " ate " << bugType << " " << bug->getId()
                              << " at position (" << x << "," << y << ")" << endl;
                     }
@@ -278,7 +291,7 @@ void Board::eatFightFunction() {
                     int newSize = largestBug->getSize() + sizeGain;
                     largestBug->setSize(newSize);
                     // cout << "Crawler " << largestBug->getId() << " grew to " << newSize << endl;
-                    string winnerType = largestBug->isHopper() ? "Hopper" : "Crawler";
+                    string winnerType = largestBug->isHopper() ? "Hopper" : (largestBug->isSuperBug() ? "SuperBug" : "Crawler");
                     cout << winnerType << " " << largestBug->getId() << " grew to " << newSize << endl;
                 }
             }

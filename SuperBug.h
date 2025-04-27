@@ -9,6 +9,8 @@
 #include "Position.h"
 
 class SuperBug : public Bug {
+private:
+    bool manualMoved = false;
 public:
     SuperBug(int id, Position position, Direction direction, int size);
     void move() override;
@@ -17,6 +19,10 @@ public:
     // override methods so that superbug with identify as superbug
     bool isSuperBug() const override {
         return true;
+    }
+
+    bool wasManualMoved() const {
+        return manualMoved;
     }
 };
 

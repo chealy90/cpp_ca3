@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <chrono>
 #include <thread>
+#include "SuperBug.h"
 
 using namespace std;
 using namespace sf;
@@ -27,7 +28,7 @@ void displayMenu() {
 }
 
 
-void recalculateSpritesVectors(vector<Sprite> &sprites, vector<Text> &numbers, Board &board, const Font &font, const Texture &hopperTexture, const Texture &crawlerTexture) {
+void recalculateSpritesVectors(vector<Sprite> &sprites, vector<Text> &numbers, Board &board, const Font &font, const Texture &hopperTexture, const Texture &crawlerTexture, const Texture &superBugTexture) {
     //remake sprites
     sprites.clear();
     numbers.clear();
@@ -35,11 +36,14 @@ void recalculateSpritesVectors(vector<Sprite> &sprites, vector<Text> &numbers, B
         Sprite sprite;
         if (bug->isHopper()) {
             sprite.setTexture(hopperTexture);
-        } else {
+        }
+        else if (bug->isSuperBug()) {
+            sprite.setTexture(superBugTexture);
+        }
+        else {
             sprite.setTexture(crawlerTexture);
         }
 
-        // Scale the sprite to fit in the 60x60 cell size
         sprite.setScale(Vector2f(60.0f / sprite.getLocalBounds().width, 60.0f / sprite.getLocalBounds().height));
         sprite.setPosition(Vector2f(static_cast<float>(bug->getPosition().x)*60, static_cast<float>(bug->getPosition().y)*60));
         sprites.push_back(sprite);
@@ -67,10 +71,18 @@ void runVisualSimulation() {
     vector<Text> numbers;
     bool colourWhite=true;
 
-    Texture hopperTexture, crawlerTexture;
-    if (!hopperTexture.loadFromFile("hopper.png") || !crawlerTexture.loadFromFile("crawler.png")) {
+    Texture hopperTexture, crawlerTexture, superBugTexture;
+    if (!hopperTexture.loadFromFile("hopper.png") || !crawlerTexture.loadFromFile("crawler.png") || !superBugTexture.loadFromFile("superbug.png")) {
         cout << "Failed to load bug textures. Exiting program..." << endl;
         return;
+    }
+
+    SuperBug* superBug = nullptr;
+    for (Bug* bug : board.getAllBugs()) {
+        if (bug->isSuperBug()) {
+            superBug = static_cast<SuperBug*>(bug);
+            break;
+        }
     }
 
     //https://www.sfml-dev.org/tutorials/2.6/graphics-text.php
@@ -96,7 +108,11 @@ void runVisualSimulation() {
         // texture based on bug type
         if (bug->isHopper()) {
             sprite.setTexture(hopperTexture);
-        } else {
+        }
+        else if (bug->isSuperBug()) {
+            sprite.setTexture(superBugTexture);
+        }
+        else {
             sprite.setTexture(crawlerTexture);
         }
 
@@ -113,7 +129,7 @@ void runVisualSimulation() {
     infoBox.setFillColor(Color::White);
     infoBox.setPosition(0, 600);
 
-    Text infoText("Crawlers(Ladybugs) and Hoppers(Block bug) shown using images\nTO USE: Press space to tap the board one move at a time, or 'p' to toggle the play through.", font, 12);
+    Text infoText("Crawlers(Ladybugs), Hoppers(Block bug) and SuperBug(original centred bug) shown using images\nTO USE: Press space to tap the board one move at a time, or 'p' to toggle the play through.", font, 12);
     infoText.setPosition(50, 630);
     infoText.setFillColor(Color::Black);
 
@@ -138,11 +154,42 @@ void runVisualSimulation() {
                 window.close();
 
             if (event.type == Event::KeyPressed) {
+                // controlling supervbug
+                if (superBug != nullptr && superBug->isAlive()) {
+                    bool superMoved = false;
+
+                    if (event.key.code == Keyboard::Up) {
+                        superBug->move(Direction::NORTH);
+                        superMoved = true;
+                    }
+                    else if (event.key.code == Keyboard::Down) {
+                        superBug->move(Direction::SOUTH);
+                        superMoved = true;
+                    }
+                    else if (event.key.code == Keyboard::Left) {
+                        superBug->move(Direction::WEST);
+                        superMoved = true;
+                    }
+                    else if (event.key.code == Keyboard::Right) {
+                        superBug->move(Direction::EAST);
+                        superMoved = true;
+                    }
+
+                    if (superMoved) {
+                        // only superbug moves
+                        recalculateSpritesVectors(sprites, numbers, board, font, hopperTexture, crawlerTexture, superBugTexture);
+
+                        // check for fight/eat
+                        board.updateCell();
+                        board.eatFightFunction();
+                    }
+                }
+
                 if (event.key.code == Keyboard::Key::Space) {
                     board.tapBoard();
 
                     //only remake sprites after changes to stop unncessesary calcs.
-                    recalculateSpritesVectors(sprites, numbers, board, font, hopperTexture, crawlerTexture);
+                    recalculateSpritesVectors(sprites, numbers, board, font, hopperTexture, crawlerTexture, superBugTexture);
                 }
                 else if (event.key.code == Keyboard::Key::P){
                     runningSimulation = !runningSimulation;
@@ -155,7 +202,7 @@ void runVisualSimulation() {
         if (runningSimulation) {
             this_thread::sleep_for(chrono::milliseconds(1000));
             board.tapBoard();
-            recalculateSpritesVectors(sprites, numbers, board, font, hopperTexture, crawlerTexture);
+            recalculateSpritesVectors(sprites, numbers, board, font, hopperTexture, crawlerTexture, superBugTexture);
         }
 
 

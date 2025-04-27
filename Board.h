@@ -16,12 +16,13 @@ class Board {
 private:
     std::vector<Bug*> bugs;
     std::vector<Bug*> cells[10][10];
-    void updateCell();
-    void eatFightFunction();
+
     std::map<int, int> eatenBy;
 public:
     Board();
     ~Board();
+    void updateCell();
+    void eatFightFunction();
 
     bool initialiseBoard(const std::string& filename);
     void displayAllBugs() const;
