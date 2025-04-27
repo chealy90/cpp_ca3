@@ -4,6 +4,7 @@
 !/cmake-build-debug/bugs.txt
 !/cmake-build-debug/crawler.png
 !/cmake-build-debug/hopper.png
+!/cmake-build-debug/superbug.png
 
 ### CLion ###
 # Ignore all .idea contents except essential project files

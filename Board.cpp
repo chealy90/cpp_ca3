@@ -13,6 +13,7 @@
 #include <thread>
 
 #include "Hopper.h"
+#include "SuperBug.h"
 
 using namespace std;
 
@@ -95,6 +96,9 @@ bool Board::initialiseBoard(const std::string &filename) {
 
                 bug = new Hopper(id, position, dir, size, hopLength);
             }
+            else if (type == 'S' || type == 's') {
+                bug = new SuperBug(id, position, dir, size);
+            }
 
             if (bug != nullptr) {
                 bugs.push_back(bug);
@@ -147,7 +151,11 @@ void Board::displayAllBugs() const {
         if (bug->isHopper()) {
             bugType = "Hopper";
             hopLength = to_string(bug->getHopLength());
-        } else {
+        }
+        else if (bug->isSuperBug()) {
+            bugType = "SuperBug";
+        }
+        else {
             bugType = "Crawler";
         }
 
@@ -394,7 +402,11 @@ void Board::displayAllCells() const {
                     if (bug->isAlive()) {
                         if (bug->isHopper()) {
                             bugType = "Hopper";
-                        } else {
+                        }
+                        else if (bug->isSuperBug()) {
+                            bugType = "SuperBug";
+                        }
+                        else {
                             bugType = "Crawler";
                         }
                         cout << bugType << " " << bug->getId() << " ";

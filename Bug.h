@@ -23,12 +23,16 @@ public:
     virtual ~Bug();
     virtual void move() = 0;
 
-    // must check if bug is hiopper
+    // must check which bug type
     virtual bool isHopper() const {
         return false;
     }
     virtual int getHopLength() const {
         return 0;
+    }
+
+    virtual bool isSuperBug() const {
+         return false;
     }
 
     // getters

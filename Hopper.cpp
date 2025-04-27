@@ -77,14 +77,4 @@ void Hopper::move() {
         this->setPosition(newPos);
         moved = true;
     }
-
-
-
-
-
-
-
-
-
-
 }
