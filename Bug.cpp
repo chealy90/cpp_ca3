@@ -13,11 +13,10 @@ Bug::Bug(int id, Position position, Direction direction, int size) {
     this->direction = direction;
     this->size = size;
     this->alive = true;
-    path.push_back(position);
 }
 
 Bug::~Bug() {
-    cout << "Destroying Bug ID: " << id << endl;
+    // cout << "Destroying Bug ID: " << id << endl;
 }
 
 bool Bug::isWayBlocked() {

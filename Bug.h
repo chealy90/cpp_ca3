@@ -10,7 +10,6 @@
 #include <SFML/Graphics.hpp>
 
 class Bug {
-
 private:
     int id;
     Position position;
@@ -18,7 +17,6 @@ private:
     int size;
     bool alive;
     std:: list<Position> path;
-
 public:
     Bug(int id, Position position, Direction direction, int size);
     bool isWayBlocked();
@@ -52,7 +50,6 @@ public:
     const std::list<Position>& getPath() const {
         return path;
     }
-
 
     // setters
     void setId(int newId) {

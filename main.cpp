@@ -27,14 +27,21 @@ void displayMenu() {
 }
 
 
-void recalculateSpritesVectors(vector<CircleShape> &sprites, vector<Text> &numbers, Board &board, const Font &font) {
+void recalculateSpritesVectors(vector<Sprite> &sprites, vector<Text> &numbers, Board &board, const Font &font, const Texture &hopperTexture, const Texture &crawlerTexture) {
     //remake sprites
     sprites.clear();
     numbers.clear();
     for (Bug* bug: board.getAllAliveBugs()) {
-        CircleShape sprite(30);
-        sprite.setFillColor(bug->isHopper() ? sf::Color::Green:Color::Red);
-        sprite.setPosition(Vector2f(static_cast<float>(bug->getPosition().x)*60, static_cast<float>(bug->getPosition().y)*60 ));
+        Sprite sprite;
+        if (bug->isHopper()) {
+            sprite.setTexture(hopperTexture);
+        } else {
+            sprite.setTexture(crawlerTexture);
+        }
+
+        // Scale the sprite to fit in the 60x60 cell size
+        sprite.setScale(Vector2f(60.0f / sprite.getLocalBounds().width, 60.0f / sprite.getLocalBounds().height));
+        sprite.setPosition(Vector2f(static_cast<float>(bug->getPosition().x)*60, static_cast<float>(bug->getPosition().y)*60));
         sprites.push_back(sprite);
 
         Text text(to_string(bug->getId())+ "\n" + to_string(bug->getSize()), font, 15);
@@ -56,9 +63,15 @@ void runVisualSimulation() {
     vector<RectangleShape> squares;
     RectangleShape infoBox;
 
-    vector<CircleShape> sprites;
+    vector<Sprite> sprites;
     vector<Text> numbers;
     bool colourWhite=true;
+
+    Texture hopperTexture, crawlerTexture;
+    if (!hopperTexture.loadFromFile("hopper.png") || !crawlerTexture.loadFromFile("crawler.png")) {
+        cout << "Failed to load bug textures. Exiting program..." << endl;
+        return;
+    }
 
     //https://www.sfml-dev.org/tutorials/2.6/graphics-text.php
     sf::Font font;
@@ -79,8 +92,15 @@ void runVisualSimulation() {
     }
 
     for (Bug* bug: board.getAllAliveBugs()) {
-        CircleShape sprite(30);
-        sprite.setFillColor(bug->isHopper() ? sf::Color::Green : sf::Color::Red);
+        Sprite sprite;
+        // texture based on bug type
+        if (bug->isHopper()) {
+            sprite.setTexture(hopperTexture);
+        } else {
+            sprite.setTexture(crawlerTexture);
+        }
+
+        sprite.setScale(Vector2f(60.0f / sprite.getLocalBounds().width, 60.0f / sprite.getLocalBounds().height));
         sprite.setPosition(Vector2f(static_cast<float>(bug->getPosition().x)*60, static_cast<float>(bug->getPosition().y)*60 ));
         sprites.push_back(sprite);
 
@@ -93,12 +113,12 @@ void runVisualSimulation() {
     infoBox.setFillColor(Color::White);
     infoBox.setPosition(0, 600);
 
-    Text infoText("Crawlers: Red      Hoppers: Yellow\nTO USE: Press space to tap the board one move at a time, or 'p' to toggle the play through.", font, 12);
+    Text infoText("Crawlers(Ladybugs) and Hoppers(Block bug) shown using images\nTO USE: Press space to tap the board one move at a time, or 'p' to toggle the play through.", font, 12);
     infoText.setPosition(50, 630);
-    infoText.setColor(Color::Black);
+    infoText.setFillColor(Color::Black);
 
 
-    window.setFramerateLimit(30);  // 60 redraws per second
+    window.setFramerateLimit(30);  // 30 redraws per second
     bool reactToMouseClicks=false;
     int shape_x;
     int shape_y;
@@ -122,7 +142,7 @@ void runVisualSimulation() {
                     board.tapBoard();
 
                     //only remake sprites after changes to stop unncessesary calcs.
-                    recalculateSpritesVectors(sprites, numbers, board, font);
+                    recalculateSpritesVectors(sprites, numbers, board, font, hopperTexture, crawlerTexture);
                 }
                 else if (event.key.code == Keyboard::Key::P){
                     runningSimulation = !runningSimulation;
@@ -131,11 +151,11 @@ void runVisualSimulation() {
 
         }
 
-        // tap is every 0.1 seconds until game over https://www.geeksforgeeks.org/sleep-function-in-cpp/?ref=header_outind
+        // tap is every 1 second until game over  https://www.geeksforgeeks.org/sleep-function-in-cpp/?ref=header_outind
         if (runningSimulation) {
             this_thread::sleep_for(chrono::milliseconds(1000));
             board.tapBoard();
-            recalculateSpritesVectors(sprites, numbers, board, font);
+            recalculateSpritesVectors(sprites, numbers, board, font, hopperTexture, crawlerTexture);
         }
 
 
@@ -145,11 +165,7 @@ void runVisualSimulation() {
             window.draw(square);
         }
 
-
-        //vector<Crawler*> crawlers = board.getAllBugs();
-
-
-        for (CircleShape &sprite: sprites) {
+        for (Sprite &sprite: sprites) {
             window.draw(sprite);
         }
 
@@ -256,6 +272,3 @@ int main() {
 
     return 0;
 }
-
-
-

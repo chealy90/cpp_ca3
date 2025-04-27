@@ -119,7 +119,7 @@ void Board::displayAllBugs() const {
          << setw(12) << "Direction"
          << setw(10) << "Status"
          << setw(12) << "Hop Length"
-         << "\n-------------------------------------------------------------------"
+         << "\n---------------------------------------------------------------------------------"
          << endl;
 
     for (Bug* bug : bugs) {
@@ -359,7 +359,7 @@ void Board::writeLifeHistoryToFile() const { // https://www.youtube.com/watch?v=
                 << setw(10) << "Status"
                 << setw(8) << "Size"
                 << "Life History\n"
-                << "----------------------------------------\n";
+                << "--------------------------------------------------------\n";
         for (const Bug *bug: bugs) {
             string bugType = bug->isHopper() ? "Hopper" : "Crawler";
             fout << left
@@ -481,13 +481,3 @@ std::vector<Bug*> Board::getAllAliveBugs() {
     }
     return aliveBugs;
 }
-
-
-
-
-
-
-
-
-
-

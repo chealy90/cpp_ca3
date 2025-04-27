@@ -5,7 +5,6 @@
 #ifndef HOPPER_H
 #define HOPPER_H
 #include "Bug.h"
-#include <SFML/Graphics.hpp>
 
 class Hopper : public Bug {
 private:
@@ -13,8 +12,6 @@ private:
 public:
     Hopper(int id, Position position, Direction direction, int size, int hopLength);
     void move() override;
-
-
 
     // override methods so that hopper with identify as hopper and show hop length when asked
     bool isHopper() const override {;
