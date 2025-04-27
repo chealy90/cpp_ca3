@@ -33,11 +33,11 @@ void recalculateSpritesVectors(vector<CircleShape> &sprites, vector<Text> &numbe
     numbers.clear();
     for (Bug* bug: board.getAllAliveBugs()) {
         CircleShape sprite(30);
-        sprite.setFillColor(Color::Red);
+        sprite.setFillColor(bug->isHopper() ? sf::Color::Green:Color::Red);
         sprite.setPosition(Vector2f(static_cast<float>(bug->getPosition().x)*60, static_cast<float>(bug->getPosition().y)*60 ));
         sprites.push_back(sprite);
 
-        Text text(to_string(bug->getId()), font, 15);
+        Text text(to_string(bug->getId())+ "\n" + to_string(bug->getSize()), font, 15);
         text.setPosition(Vector2f(static_cast<float>(bug->getPosition().x)*60 + 15, static_cast<float>(bug->getPosition().y)*60 + 15));
         numbers.push_back(text);
     }
@@ -52,8 +52,10 @@ void runVisualSimulation() {
         return;
     }
 
-    RenderWindow window(VideoMode(600, 600), "CA3");
+    RenderWindow window(VideoMode(600, 700), "CA3");
     vector<RectangleShape> squares;
+    RectangleShape infoBox;
+
     vector<CircleShape> sprites;
     vector<Text> numbers;
     bool colourWhite=true;
@@ -78,14 +80,23 @@ void runVisualSimulation() {
 
     for (Bug* bug: board.getAllAliveBugs()) {
         CircleShape sprite(30);
-        sprite.setFillColor(Color::Red);
+        sprite.setFillColor(bug->isHopper() ? sf::Color::Green : sf::Color::Red);
         sprite.setPosition(Vector2f(static_cast<float>(bug->getPosition().x)*60, static_cast<float>(bug->getPosition().y)*60 ));
         sprites.push_back(sprite);
 
-        Text text(to_string(bug->getId()), font, 15);
+        Text text(to_string(bug->getId())+ "\n" + to_string(bug->getSize()), font, 15);
         text.setPosition(Vector2f(static_cast<float>(bug->getPosition().x)*60 + 15, static_cast<float>(bug->getPosition().y)*60 + 15));
         numbers.push_back(text);
     }
+
+    infoBox.setSize(Vector2f(600, 100));
+    infoBox.setFillColor(Color::White);
+    infoBox.setPosition(0, 600);
+
+    Text infoText("Crawlers: Red      Hoppers: Yellow\nTO USE: Press space to tap the board one move at a time, or 'p' to toggle the play through.", font, 12);
+    infoText.setPosition(50, 630);
+    infoText.setColor(Color::Black);
+
 
     window.setFramerateLimit(30);  // 60 redraws per second
     bool reactToMouseClicks=false;
@@ -145,6 +156,8 @@ void runVisualSimulation() {
         for (Text &text: numbers) {
             window.draw(text);
         }
+        window.draw(infoBox);
+        window.draw(infoText);
         window.display();
     }
 }

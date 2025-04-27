@@ -7,8 +7,10 @@
 #include "Position.h"
 #include "Direction.h"
 #include <list>
+#include <SFML/Graphics.hpp>
 
 class Bug {
+
 private:
     int id;
     Position position;
@@ -16,11 +18,13 @@ private:
     int size;
     bool alive;
     std:: list<Position> path;
+
 public:
     Bug(int id, Position position, Direction direction, int size);
+    bool isWayBlocked();
     virtual ~Bug();
     virtual void move() = 0;
-    bool isWayBlocked() const;
+
     // must check if bug is hiopper
     virtual bool isHopper() const {
         return false;
@@ -48,6 +52,7 @@ public:
     const std::list<Position>& getPath() const {
         return path;
     }
+
 
     // setters
     void setId(int newId) {

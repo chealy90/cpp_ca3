@@ -20,18 +20,47 @@ Bug::~Bug() {
     cout << "Destroying Bug ID: " << id << endl;
 }
 
-bool Bug::isWayBlocked() const {
-    if (direction == Direction::NORTH && position.y <= 0) {
-        return true;
+bool Bug::isWayBlocked() {
+    bool blocked = false;
+    if (this->isHopper()) {
+        switch (this->getDirection()) {
+            case Direction::NORTH: {
+                if (this->getPosition().y <= 2) blocked = true;
+                break;
+            }
+            case Direction::SOUTH: {
+                if (this->getPosition().y >= 7) blocked = true;
+                break;
+            }
+            case Direction::EAST: {
+                if (this->getPosition().x >= 7) blocked = true;
+                break;
+            }
+            case Direction::WEST: {
+                if (this->getPosition().x <= 2) blocked = true;
+                break;
+            }
+        }
     }
-    if (direction == Direction::EAST && position.x >= 9) {
-        return true;
+
+    else {
+        if (direction == Direction::NORTH && position.y <= 0) {
+            blocked = true;
+        }
+        if (direction == Direction::EAST && position.x >= 9) {
+            blocked = true;
+        }
+        if (direction == Direction::SOUTH && position.y >= 9) {
+            blocked = true;
+        }
+        if (direction == Direction::WEST && position.x <= 0) {
+            blocked = true;
+        }
     }
-    if (direction == Direction::SOUTH && position.y >= 9) {
-        return true;
-    }
-    if (direction == Direction::WEST && position.x <= 0) {
-        return true;
-    }
-    return false;
+
+    return blocked;
+
+
+
+
 }

@@ -7,10 +7,12 @@
 #include "Position.h"
 #include "Direction.h"
 #include <list>
+#include <SFML/Graphics.hpp>
 
 #include "Bug.h"
 
 class Crawler : public Bug {
+
 public:
     Crawler(int id, Position position, Direction direction, int size);
     void move() override;

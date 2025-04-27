@@ -92,6 +92,7 @@ bool Board::initialiseBoard(const std::string &filename) {
                 } else {
                     hopLength = 2; // default hop length
                 }
+
                 bug = new Hopper(id, position, dir, size, hopLength);
             }
 

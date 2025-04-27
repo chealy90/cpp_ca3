@@ -3,7 +3,7 @@ project(cpp_ca3)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(cpp_ca3 main.cpp
+add_executable(CA3 main.cpp
         Crawler.h
         Position.h
         Crawler.cpp
@@ -16,9 +16,8 @@ add_executable(cpp_ca3 main.cpp
         Hopper.h)
 
 
-set(SFML_STATIC_LIBRARIES TRUE)
-set(SFML_DIR C:/Users/favou/Documents/SFML-2.6.2/lib/cmake/SFML)
-find_package(SFML COMPONENTS system window graphics network REQUIRED) # remove audio references
+set(SFML_DIR C:/SFML-2.5.1/lib/cmake/SFML)
+find_package(SFML COMPONENTS system window graphics network REQUIRED)
 
-include_directories(C:/Users/favou/Documents/SFML-2.6.2/include)
-target_link_libraries(cpp_ca3 sfml-system sfml-window sfml-graphics)
+include_directories(C:/SFML-2.5.1/include)
+target_link_libraries(CA3 sfml-system sfml-window sfml-graphics)
